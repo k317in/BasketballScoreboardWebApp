@@ -1,0 +1,20 @@
+{
+  "name": "Basketball Scoreboard",
+  "short_name": "Scoreboard",
+  "description": "Professional basketball scoreboard application",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "landscape-primary",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "utilities"],
+  "lang": "en"
+}

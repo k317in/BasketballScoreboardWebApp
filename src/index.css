@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('@fontsource/orbitron/400.css');
+@import url('@fontsource/orbitron/700.css');
+@import url('@fontsource/orbitron/900.css');
+
+/* Custom styles for the scoreboard */
+body {
+  margin: 0;
+  font-family: 'Orbitron', monospace;
+  background-color: #000;
+  color: #fff;
+  /* PWA fullscreen support */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  /* Prevent zoom on mobile */
+  touch-action: manipulation;
+  /* Hide scrollbars on mobile */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide address bar on mobile */
+@media screen and (max-width: 768px) {
+  html, body {
+    height: 100vh;
+    height: -webkit-fill-available;
+    overflow-x: hidden;
+  }
+  
+  #root {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* PWA display mode */
+@media (display-mode: standalone) {
+  body {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Digital clock styling */
+.digital-display {
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 10px currentColor;
+}
+
+/* Fullscreen styles */
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background: #000;
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+  /* Consistent card width for mobile */
+  .bg-gray-900 {
+    min-height: 44px;
+  }
+  
+  /* Ensure all cards have consistent padding and sizing */
+  .bg-gray-900.rounded-lg {
+    padding: 0.75rem 1rem;
+  }
+  
+  .grid-cols-3 {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  
+  .text-6xl {
+    font-size: 3rem;
+  }
+  
+  .text-8xl {
+    font-size: 4rem;
+  }
+}
+
+/* Animation for score changes */
+@keyframes scoreFlash {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.score-flash {
+  animation: scoreFlash 0.3s ease-in-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
