@@ -7,7 +7,7 @@ import Controller from './components/Controller';
 import TeamSettings from './components/TeamSettings';
 import GameSettings from './components/GameSettings';
 import Login from './components/Login';
-import AnimatedNavigation from './components/AnimatedNavigation';
+import Navigation from './components/Navigation';
 import ThursdayMode from './components/ThursdayMode';
 
 type ViewType = 'display' | 'team-settings' | 'game-settings' | 'stats' | 'controller' | 'login' | 'thursday';
@@ -64,7 +64,7 @@ function App() {
     <div className="min-h-screen bg-black text-white pb-20" style={{ fontFamily: 'Orbitron, monospace' }}>
       {renderCurrentView()}
       {currentView !== 'login' && (
-        <AnimatedNavigation currentView={currentView} onViewChange={setCurrentView} />
+        <Navigation currentView={currentView} onViewChange={setCurrentView} />
       )}
     </div>
   );
