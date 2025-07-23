@@ -153,38 +153,17 @@ export class GoogleSheetsService {
       throw new Error('Google Sheet ID not configured');
     }
 
-    try {
-      // Use Google Apps Script Web App or Google Sheets API to update the result
-      // For now, we'll use a simple approach with Google Apps Script Web App
-      const webAppUrl = import.meta.env.VITE_GOOGLE_WEBAPP_URL;
-      
-      if (!webAppUrl) {
-        console.warn('Google Web App URL not configured. Result will be stored locally only.');
-        return;
-      }
-
-      const response = await fetch(webAppUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'updateResult',
-          sheetId: this.sheetId,
-          gameOrder: gameOrder,
-          result: result
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update Google Sheets: ${response.statusText}`);
-      }
-
-      console.log(`Successfully updated game ${gameOrder} with result: ${result}`);
-    } catch (error) {
-      console.error('Error updating Google Sheets:', error);
-      // Don't throw error - allow the game to continue even if Google Sheets update fails
-    }
+    // Note: This is a simplified approach. In a real implementation,
+    // you would need to use the Google Sheets API with proper authentication
+    // to write data back to the sheet. For now, we'll just log the action.
+    console.log(`Would update game ${gameOrder} with result: ${result}`);
+    
+    // In a full implementation, you would:
+    // 1. Use Google Sheets API with OAuth2 authentication
+    // 2. Find the row with the matching game order
+    // 3. Update the result column (column D) for that row
+    
+    throw new Error('Writing to Google Sheets requires API authentication. This is a read-only implementation.');
   }
 }
 

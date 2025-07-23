@@ -30,7 +30,6 @@ const ThursdayMode: React.FC<ThursdayModeProps> = ({ onBack, onLogin }) => {
   const store = useThursdayStore();
   const { isTable } = useAuthStore();
   const { currentRoom } = useRoomStore();
-  const scoreboardStore = useScoreboardStore();
   const { emitUpdate } = useThursdaySync(currentRoom);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -92,41 +91,13 @@ const ThursdayMode: React.FC<ThursdayModeProps> = ({ onBack, onLogin }) => {
 
   const handlePreviousGame = () => {
     if (!isTable) return;
-    
-    // When going to previous game, also record current result and reset
-    const currentGame = store.getCurrentGame();
-    if (currentGame) {
-      const result = `${scoreboardStore.team1.score}-${scoreboardStore.team2.score}`;
-      store.updateGameResult(store.currentGameIndex, result);
-      
-      googleSheetsService.updateGameResult(currentGame.gameOrder, result)
-        .catch((error) => {
-          console.error('Failed to record game result:', error);
-        });
-    }
-    
     store.previousGame();
-    scoreboardStore.resetGameData();
     emitUpdate(useThursdayStore.getState());
   };
 
   const handleGameSelect = (gameIndex: number) => {
     if (!isTable) return;
-    
-    // Record current game result before switching
-    const currentGame = store.getCurrentGame();
-    if (currentGame && gameIndex !== store.currentGameIndex) {
-      const result = `${scoreboardStore.team1.score}-${scoreboardStore.team2.score}`;
-      store.updateGameResult(store.currentGameIndex, result);
-      
-      googleSheetsService.updateGameResult(currentGame.gameOrder, result)
-        .catch((error) => {
-          console.error('Failed to record game result:', error);
-        });
-    }
-    
     store.setCurrentGameIndex(gameIndex);
-    scoreboardStore.resetGameData();
     emitUpdate(useThursdayStore.getState());
   };
 
