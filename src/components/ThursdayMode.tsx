@@ -85,7 +85,31 @@ const ThursdayMode: React.FC<ThursdayModeProps> = ({ onBack, onLogin }) => {
 
   const handleNextGame = () => {
     if (!isTable) return;
+    
+    // 1. Record the current game result to Google Sheets
+    const currentGame = store.getCurrentGame();
+    if (currentGame) {
+      const result = `${scoreboardStore.team1.score}-${scoreboardStore.team2.score}`;
+      
+      // Update local store first
+      store.updateGameResult(store.currentGameIndex, result);
+      
+      // Update Google Sheets
+      googleSheetsService.updateGameResult(currentGame.gameOrder, result)
+        .then(() => {
+          console.log('Game result recorded successfully');
+        })
+        .catch((error) => {
+          console.error('Failed to record game result:', error);
+        });
+    }
+    
+    // 2. Move to next game
     store.nextGame();
+    
+    // 3. Reset the scoreboard for the new game
+    scoreboardStore.resetGameData();
+    
     emitUpdate(useThursdayStore.getState());
   };
 
