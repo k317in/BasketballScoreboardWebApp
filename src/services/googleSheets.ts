@@ -147,6 +147,24 @@ export class GoogleSheetsService {
   isConfigured(): boolean {
     return !!this.sheetId;
   }
+
+  async updateGameResult(gameOrder: number, result: string): Promise<void> {
+    if (!this.sheetId) {
+      throw new Error('Google Sheet ID not configured');
+    }
+
+    // Note: This is a simplified approach. In a real implementation,
+    // you would need to use the Google Sheets API with proper authentication
+    // to write data back to the sheet. For now, we'll just log the action.
+    console.log(`Would update game ${gameOrder} with result: ${result}`);
+    
+    // In a full implementation, you would:
+    // 1. Use Google Sheets API with OAuth2 authentication
+    // 2. Find the row with the matching game order
+    // 3. Update the result column (column D) for that row
+    
+    throw new Error('Writing to Google Sheets requires API authentication. This is a read-only implementation.');
+  }
 }
 
 export const googleSheetsService = new GoogleSheetsService();

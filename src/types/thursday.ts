@@ -12,6 +12,7 @@ export interface GameSchedule {
   gameOrder: number;
   homeTeam: string;
   awayTeam: string;
+  result?: string;
 }
 
 export interface ThursdayModeState {

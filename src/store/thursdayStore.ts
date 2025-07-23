@@ -77,6 +77,18 @@ export const useThursdayStore = create<ThursdayStore>()(
         }
       },
 
+      updateGameResult: (gameIndex, result) => {
+        const { schedule } = get();
+        const updatedSchedule = [...schedule];
+        if (updatedSchedule[gameIndex]) {
+          updatedSchedule[gameIndex] = { ...updatedSchedule[gameIndex], result };
+          set({ 
+            schedule: updatedSchedule,
+            lastUpdated: Date.now()
+          });
+        }
+      },
+
       updateLastUpdated: () => set({ lastUpdated: Date.now() }),
 
       // Getters

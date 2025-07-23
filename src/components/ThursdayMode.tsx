@@ -314,6 +314,9 @@ const ThursdayMode: React.FC<ThursdayModeProps> = ({ onBack, onLogin }) => {
                       <div className="text-sm space-y-1">
                         <div className="text-blue-400">Home: {game.homeTeam}</div>
                         <div className="text-red-400">Away: {game.awayTeam}</div>
+                        {game.result && (
+                          <div className="text-green-400 font-semibold">Result: {game.result}</div>
+                        )}
                       </div>
                       {index === store.currentGameIndex && (
                         <div className="mt-2 text-xs text-purple-400 font-semibold">
