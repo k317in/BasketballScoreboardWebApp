@@ -30,6 +30,7 @@ const ThursdayMode: React.FC<ThursdayModeProps> = ({ onBack, onLogin }) => {
   const store = useThursdayStore();
   const { isTable } = useAuthStore();
   const { currentRoom } = useRoomStore();
+  const scoreboardStore = useScoreboardStore();
   const { emitUpdate } = useThursdaySync(currentRoom);
 
   const [isLoading, setIsLoading] = useState(false);
