@@ -6,7 +6,7 @@ import { useThursdayStore } from '../store/thursdayStore';
 import { useFirebaseSync } from '../hooks/useFirebaseSync';
 import { useThursdaySync } from '../hooks/useThursdaySync';
 import { formatTime, formatShotClock } from '../utils/timeFormat';
-import { Maximize } from 'lucide-react';
+import { Maximize, Play, Pause, RotateCcw, SkipForward, SkipBack, Plus, Minus } from 'lucide-react';
 import RoleIndicator from './RoleIndicator';
 
 interface ScoreboardDisplayProps {
@@ -75,69 +75,15 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
   }, [store.gameSettings.shotClockEnabled, store.isShotClockRunning, store.shotClockTime, emitUpdate, isTable]);
 
   const handleScoreChange = (teamNumber: 1 | 2, increment: number) => {
-    // Allow score changes in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     store.updateTeamScore(teamNumber, increment);
     emitUpdate(useScoreboardStore.getState());
   };
 
   const handleFoulChange = (teamNumber: 1 | 2, increment: number) => {
-    // Allow foul changes in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     store.updateTeamFouls(teamNumber, increment);
     emitUpdate(useScoreboardStore.getState());
-  };
-
-  const handleGameClockToggle = () => {
-    // Allow game clock control in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
-    store.toggleGameClock();
-    emitUpdate(useScoreboardStore.getState());
-  };
-
-  const handleGameClockReset = () => {
-    // Allow game clock reset in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
-    store.resetGameClock();
-    emitUpdate(useScoreboardStore.getState());
-  };
-
-  const handleNextGame = () => {
-    // Allow game navigation in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
-    
-    // Capture current game result before moving to next
-    const currentScore = `${store.team1.score}-${store.team2.score}`;
-    thursdayStore.updateGameResult(thursdayStore.currentGameIndex, currentScore);
-    
-    // Move to next game
-    thursdayStore.nextGame();
-    
-    // Reset scoreboard for new game
-    store.resetGameData();
-    
-    // Emit updates
-    emitUpdate(useScoreboardStore.getState());
-    emitThursdayUpdate(useThursdayStore.getState());
-  };
-
-  const handlePreviousGame = () => {
-    // Allow game navigation in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
-    
-    // Capture current game result before moving to previous
-    const currentScore = `${store.team1.score}-${store.team2.score}`;
-    thursdayStore.updateGameResult(thursdayStore.currentGameIndex, currentScore);
-    
-    // Move to previous game
-    thursdayStore.previousGame();
-    
-    // Reset scoreboard for new game
-    store.resetGameData();
-    
-    // Emit updates
-    emitUpdate(useScoreboardStore.getState());
-    emitThursdayUpdate(useThursdayStore.getState());
   };
 
   const toggleFullscreen = () => {
@@ -195,6 +141,97 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
           </span>
         </div>
       </div>
+
+      {/* Tuesday Mode Inline Controls */}
+      {thursdayStore.isEnabled && (
+        <div className="bg-gray-800 border-t border-gray-700 py-3 px-2">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 items-center justify-center">
+              {/* Home Team Controls */}
+              <button
+                onClick={() => handleScoreChange(1, 1)}
+                className="flex items-center justify-center gap-1 px-2 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold transition-colors text-xs sm:text-sm min-h-[44px]"
+              >
+                <Plus size={14} />
+                <span className="hidden sm:inline">Home</span>
+              </button>
+              
+              <button
+                onClick={() => handleScoreChange(1, -1)}
+                disabled={store.team1.score <= 0}
+                className="flex items-center justify-center gap-1 px-2 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:text-gray-400 rounded-lg font-semibold transition-colors text-xs sm:text-sm min-h-[44px]"
+              >
+                <Minus size={14} />
+                <span className="hidden sm:inline">Home</span>
+              </button>
+
+              {/* Game Controls */}
+              <button
+                onClick={handleGameClockToggle}
+                className={`flex items-center justify-center gap-1 px-2 py-3 rounded-lg font-semibold transition-colors text-xs sm:text-sm min-h-[44px] ${
+                  store.isGameRunning 
+                    ? 'bg-red-600 hover:bg-red-700' 
+                    : 'bg-green-600 hover:bg-green-700'
+                }`}
+              >
+                {store.isGameRunning ? <Pause size={14} /> : <Play size={14} />}
+                <span className="hidden sm:inline">{store.isGameRunning ? 'Pause' : 'Start'}</span>
+              </button>
+              
+              <button
+                onClick={handleGameClockReset}
+                className="flex items-center justify-center gap-1 px-2 py-3 bg-orange-600 hover:bg-orange-700 rounded-lg font-semibold transition-colors text-xs sm:text-sm min-h-[44px]"
+              >
+                <RotateCcw size={14} />
+                <span className="hidden sm:inline">Reset</span>
+              </button>
+              
+              <button
+                onClick={handlePreviousGame}
+                disabled={!thursdayStore.canGoPrevious()}
+                className="flex items-center justify-center gap-1 px-2 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:text-gray-400 rounded-lg font-semibold transition-colors text-xs sm:text-sm min-h-[44px]"
+              >
+                <SkipBack size={14} />
+                <span className="hidden sm:inline">Back</span>
+              </button>
+              
+              <button
+                onClick={handleNextGame}
+                disabled={!thursdayStore.canGoNext()}
+                className="flex items-center justify-center gap-1 px-2 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:text-gray-400 rounded-lg font-semibold transition-colors text-xs sm:text-sm min-h-[44px]"
+              >
+                <SkipForward size={14} />
+                <span className="hidden sm:inline">Next</span>
+              </button>
+
+              {/* Away Team Controls */}
+              <button
+                onClick={() => handleScoreChange(2, 1)}
+                className="flex items-center justify-center gap-1 px-2 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold transition-colors text-xs sm:text-sm min-h-[44px]"
+              >
+                <Plus size={14} />
+                <span className="hidden sm:inline">Away</span>
+              </button>
+              
+              <button
+                onClick={() => handleScoreChange(2, -1)}
+                disabled={store.team2.score <= 0}
+                className="flex items-center justify-center gap-1 px-2 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:text-gray-400 rounded-lg font-semibold transition-colors text-xs sm:text-sm min-h-[44px]"
+              >
+                <Minus size={14} />
+                <span className="hidden sm:inline">Away</span>
+              </button>
+            </div>
+            
+            {/* Game Info Row */}
+            <div className="mt-2 text-center text-xs sm:text-sm text-gray-400">
+              Game {thursdayStore.currentGameIndex + 1} of {thursdayStore.getTotalGames()} • 
+              Score: {store.team1.score}-{store.team2.score} • 
+              Time: {formatTime(store.gameTime)}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Team Banners */}
       {store.showProportionalBanners && (
