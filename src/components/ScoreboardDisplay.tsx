@@ -107,10 +107,10 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
     thursdayStore.updateGameResult(thursdayStore.currentGameIndex, currentScore);
     
     // Switch to previous game
-    thursdayStore.goToPreviousGame();
+    thursdayStore.previousGame();
     
     // Reset scoreboard for the new game
-    store.resetScores();
+    store.resetGameData();
     store.resetGameClock();
     
     emitThursdayUpdate(useThursdayStore.getState());
@@ -126,10 +126,10 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
     thursdayStore.updateGameResult(thursdayStore.currentGameIndex, currentScore);
     
     // Switch to next game
-    thursdayStore.goToNextGame();
+    thursdayStore.nextGame();
     
     // Reset scoreboard for the new game
-    store.resetScores();
+    store.resetGameData();
     store.resetGameClock();
     
     emitThursdayUpdate(useThursdayStore.getState());
