@@ -86,6 +86,56 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
     emitUpdate(useScoreboardStore.getState());
   };
 
+  const handleGameClockToggle = () => {
+    if (!isTable && !thursdayStore.isEnabled) return;
+    store.toggleGameClock();
+    emitUpdate(useScoreboardStore.getState());
+  };
+
+  const handleGameClockReset = () => {
+    if (!isTable && !thursdayStore.isEnabled) return;
+    store.resetGameClock();
+    emitUpdate(useScoreboardStore.getState());
+  };
+
+  const handlePreviousGame = () => {
+    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!thursdayStore.canGoPrevious()) return;
+    
+    // Capture current game result before switching
+    const currentScore = `${store.team1.score}-${store.team2.score}`;
+    thursdayStore.updateGameResult(thursdayStore.currentGameIndex, currentScore);
+    
+    // Switch to previous game
+    thursdayStore.goToPreviousGame();
+    
+    // Reset scoreboard for the new game
+    store.resetScores();
+    store.resetGameClock();
+    
+    emitThursdayUpdate(useThursdayStore.getState());
+    emitUpdate(useScoreboardStore.getState());
+  };
+
+  const handleNextGame = () => {
+    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!thursdayStore.canGoNext()) return;
+    
+    // Capture current game result before switching
+    const currentScore = `${store.team1.score}-${store.team2.score}`;
+    thursdayStore.updateGameResult(thursdayStore.currentGameIndex, currentScore);
+    
+    // Switch to next game
+    thursdayStore.goToNextGame();
+    
+    // Reset scoreboard for the new game
+    store.resetScores();
+    store.resetGameClock();
+    
+    emitThursdayUpdate(useThursdayStore.getState());
+    emitUpdate(useScoreboardStore.getState());
+  };
+
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
