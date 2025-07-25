@@ -58,58 +58,50 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
   }, [store.gameSettings.shotClockEnabled, store.isShotClockRunning, store.shotClockTime, emitUpdate]);
 
   const handleScoreChange = (teamNumber: 1 | 2, increment: number) => {
-    // Allow score changes in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     store.updateTeamScore(teamNumber, increment);
     emitUpdate(useScoreboardStore.getState());
   };
 
   const handleFoulChange = (teamNumber: 1 | 2, increment: number) => {
-    // Allow foul changes in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     store.updateTeamFouls(teamNumber, increment);
     emitUpdate(useScoreboardStore.getState());
   };
 
   const handleTimeoutChange = (teamNumber: 1 | 2, increment: number) => {
-    // Allow timeout changes in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     store.updateTeamTimeouts(teamNumber, increment);
     emitUpdate(useScoreboardStore.getState());
   };
 
   const handlePeriodChange = (increment: number) => {
-    // Allow period changes in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     const newPeriod = Math.max(1, Math.min(store.gameSettings.periodCount, store.period + increment));
     store.setPeriod(newPeriod);
     emitUpdate(useScoreboardStore.getState());
   };
 
   const handleGameClockToggle = () => {
-    // Allow game clock control in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     store.toggleGameClock();
     emitUpdate(useScoreboardStore.getState());
   };
 
   const handleGameClockReset = () => {
-    // Allow game clock reset in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     store.resetGameClock();
     emitUpdate(useScoreboardStore.getState());
   };
 
   const handleShotClockToggle = () => {
-    // Allow shot clock control in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     store.toggleShotClock();
     emitUpdate(useScoreboardStore.getState());
   };
 
   const handleShotClockReset = () => {
-    // Allow shot clock reset in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     store.resetShotClock();
     if (!store.isShotClockRunning) {
       store.toggleShotClock(); // Start the clock if it's not running
@@ -118,8 +110,7 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
   };
 
   const handleShotClockReset14 = () => {
-    // Allow shot clock reset in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     store.setShotClockTime(14);
     if (!store.isShotClockRunning) {
       store.toggleShotClock(); // Start the clock if it's not running
@@ -128,14 +119,13 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
   };
 
   const handleResetGame = () => {
-    // Allow game reset in Tuesday Mode without login
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     store.resetGameData();
     emitUpdate(useScoreboardStore.getState());
   };
 
   // Only show access restriction if not in Tuesday Mode
-  if (!isTable && !thursdayStore.isEnabled) {
+  if (!isTable) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
         <div className="text-center">

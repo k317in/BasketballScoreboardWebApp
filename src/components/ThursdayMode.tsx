@@ -84,28 +84,25 @@ const ThursdayMode: React.FC<ThursdayModeProps> = ({ onBack, onLogin }) => {
   };
 
   const handleNextGame = () => {
-    // Allow game navigation in Tuesday Mode without login
-    if (!isTable && !store.isEnabled) return;
+    if (!isTable) return;
     store.nextGame();
     emitUpdate(useThursdayStore.getState());
   };
 
   const handlePreviousGame = () => {
-    // Allow game navigation in Tuesday Mode without login
-    if (!isTable && !store.isEnabled) return;
+    if (!isTable) return;
     store.previousGame();
     emitUpdate(useThursdayStore.getState());
   };
 
   const handleGameSelect = (gameIndex: number) => {
-    // Allow game selection in Tuesday Mode without login
-    if (!isTable && !store.isEnabled) return;
+    if (!isTable) return;
     store.setCurrentGameIndex(gameIndex);
     emitUpdate(useThursdayStore.getState());
   };
 
   // Only show access restriction if not in Tuesday Mode
-  if (!isTable && !store.isEnabled) {
+  if (!isTable) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
         <div className="text-center">

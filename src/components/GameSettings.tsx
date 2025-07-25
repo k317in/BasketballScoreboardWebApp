@@ -107,7 +107,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({ onBack, onLogin }) => {
   };
 
   // Only show access restriction if not in Tuesday Mode
-  if (!isTable && !isTuesdayMode) {
+  if (!isTable) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
         <div className="text-center">

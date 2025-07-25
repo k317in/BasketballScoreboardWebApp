@@ -64,7 +64,7 @@ const TeamSettings: React.FC<TeamSettingsProps> = ({ onBack, onLogin }) => {
   const currentTeam = activeTeam === 1 ? store.team1 : store.team2;
 
   // Only show access restriction if not in Tuesday Mode
-  if (!isTable && !isTuesdayMode) {
+  if (!isTable) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
         <div className="text-center">

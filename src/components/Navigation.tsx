@@ -26,7 +26,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange }) =>
         <div className="flex justify-center space-x-2 sm:space-x-4 md:space-x-8 overflow-x-auto">
           {navItems.map(({ id, icon: Icon, label, requiresTable }) => {
             const isDisabled = (requiresTable && !isTable) || id === 'stats';
-            const isVisible = !requiresTable || isTable; // Hide restricted items for guests
+            const isVisible = !requiresTable || isTable;
             
             if (!isVisible) return null;
             

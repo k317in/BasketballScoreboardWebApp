@@ -87,19 +87,19 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
   };
 
   const handleGameClockToggle = () => {
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     store.toggleGameClock();
     emitUpdate(useScoreboardStore.getState());
   };
 
   const handleGameClockReset = () => {
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     store.resetGameClock();
     emitUpdate(useScoreboardStore.getState());
   };
 
   const handlePreviousGame = () => {
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     if (!thursdayStore.canGoPrevious()) return;
     
     // Capture current game result before switching
@@ -118,7 +118,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
   };
 
   const handleNextGame = () => {
-    if (!isTable && !thursdayStore.isEnabled) return;
+    if (!isTable) return;
     if (!thursdayStore.canGoNext()) return;
     
     // Capture current game result before switching
@@ -193,7 +193,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
       </div>
 
       {/* Tuesday Mode Inline Controls */}
-      {thursdayStore.isEnabled && (
+      {thursdayStore.isEnabled && isTable && (
         <div className="bg-gray-800 border-t border-gray-700 py-3 px-2">
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 items-center justify-center">
