@@ -75,15 +75,69 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
   }, [store.gameSettings.shotClockEnabled, store.isShotClockRunning, store.shotClockTime, emitUpdate, isTable]);
 
   const handleScoreChange = (teamNumber: 1 | 2, increment: number) => {
-    if (!isTable) return;
+    // Allow score changes in Tuesday Mode without login
+    if (!isTable && !thursdayStore.isEnabled) return;
     store.updateTeamScore(teamNumber, increment);
     emitUpdate(useScoreboardStore.getState());
   };
 
   const handleFoulChange = (teamNumber: 1 | 2, increment: number) => {
-    if (!isTable) return;
+    // Allow foul changes in Tuesday Mode without login
+    if (!isTable && !thursdayStore.isEnabled) return;
     store.updateTeamFouls(teamNumber, increment);
     emitUpdate(useScoreboardStore.getState());
+  };
+
+  const handleGameClockToggle = () => {
+    // Allow game clock control in Tuesday Mode without login
+    if (!isTable && !thursdayStore.isEnabled) return;
+    store.toggleGameClock();
+    emitUpdate(useScoreboardStore.getState());
+  };
+
+  const handleGameClockReset = () => {
+    // Allow game clock reset in Tuesday Mode without login
+    if (!isTable && !thursdayStore.isEnabled) return;
+    store.resetGameClock();
+    emitUpdate(useScoreboardStore.getState());
+  };
+
+  const handleNextGame = () => {
+    // Allow game navigation in Tuesday Mode without login
+    if (!isTable && !thursdayStore.isEnabled) return;
+    
+    // Capture current game result before moving to next
+    const currentScore = `${store.team1.score}-${store.team2.score}`;
+    thursdayStore.updateGameResult(thursdayStore.currentGameIndex, currentScore);
+    
+    // Move to next game
+    thursdayStore.nextGame();
+    
+    // Reset scoreboard for new game
+    store.resetGameData();
+    
+    // Emit updates
+    emitUpdate(useScoreboardStore.getState());
+    emitThursdayUpdate(useThursdayStore.getState());
+  };
+
+  const handlePreviousGame = () => {
+    // Allow game navigation in Tuesday Mode without login
+    if (!isTable && !thursdayStore.isEnabled) return;
+    
+    // Capture current game result before moving to previous
+    const currentScore = `${store.team1.score}-${store.team2.score}`;
+    thursdayStore.updateGameResult(thursdayStore.currentGameIndex, currentScore);
+    
+    // Move to previous game
+    thursdayStore.previousGame();
+    
+    // Reset scoreboard for new game
+    store.resetGameData();
+    
+    // Emit updates
+    emitUpdate(useScoreboardStore.getState());
+    emitThursdayUpdate(useThursdayStore.getState());
   };
 
   const toggleFullscreen = () => {
