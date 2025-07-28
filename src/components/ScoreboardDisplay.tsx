@@ -49,13 +49,6 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
       interval = setInterval(() => {
         const newTime = store.gameTime - 1;
         store.setGameTime(newTime);
-        
-        // Check if game has ended (time reached 0) and user is table
-        if (newTime === 0 && isTable) {
-          store.recordGameResult();
-          store.toggleGameClock(); // Stop the game clock
-        }
-        
         // Only emit update if user is table (to avoid conflicts)
         if (isTable) {
           emitUpdate(useScoreboardStore.getState());
@@ -679,6 +672,41 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
           )}
           </>
         )}
+
+        {/* Win/Loss Statistics */}
+        <div className="mt-4 sm:mt-6 grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-6xl mx-auto">
+          {/* Team 1 Wins */}
+          <div className="bg-gray-900 rounded-lg p-3 sm:p-4">
+            <div className="text-center">
+              <div className="text-xs sm:text-sm text-gray-400 mb-1">{getDisplayTeamName(1)} WINS</div>
+              <div className="text-lg sm:text-2xl md:text-3xl font-bold text-green-400">{store.team1.wins}</div>
+            </div>
+          </div>
+
+          {/* Team 1 Losses */}
+          <div className="bg-gray-900 rounded-lg p-3 sm:p-4">
+            <div className="text-center">
+              <div className="text-xs sm:text-sm text-gray-400 mb-1">{getDisplayTeamName(1)} LOSSES</div>
+              <div className="text-lg sm:text-2xl md:text-3xl font-bold text-red-400">{store.team1.losses}</div>
+            </div>
+          </div>
+
+          {/* Team 2 Wins */}
+          <div className="bg-gray-900 rounded-lg p-3 sm:p-4">
+            <div className="text-center">
+              <div className="text-xs sm:text-sm text-gray-400 mb-1">{getDisplayTeamName(2)} WINS</div>
+              <div className="text-lg sm:text-2xl md:text-3xl font-bold text-green-400">{store.team2.wins}</div>
+            </div>
+          </div>
+
+          {/* Team 2 Losses */}
+          <div className="bg-gray-900 rounded-lg p-3 sm:p-4">
+            <div className="text-center">
+              <div className="text-xs sm:text-sm text-gray-400 mb-1">{getDisplayTeamName(2)} LOSSES</div>
+              <div className="text-lg sm:text-2xl md:text-3xl font-bold text-red-400">{store.team2.losses}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
