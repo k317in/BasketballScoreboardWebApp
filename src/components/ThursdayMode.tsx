@@ -106,16 +106,31 @@ const ThursdayMode: React.FC<ThursdayModeProps> = ({ onBack, onLogin }) => {
     if (!isTable) return;
 
     // Create CSV header
-    const headers = ['Game Order', 'Home Team', 'Away Team', 'Result', 'Status'];
+    const headers = ['Game Order', 'Home Team', 'Away Team', 'Home Score', 'Away Score', 'Status'];
     
     // Create CSV rows
-    const rows = store.schedule.map(game => [
-      game.gameOrder.toString(),
-      game.homeTeam,
-      game.awayTeam,
-      game.result || 'Not Played',
-      game.result ? 'Completed' : 'Pending'
-    ]);
+    const rows = store.schedule.map(game => {
+      let homeScore = '';
+      let awayScore = '';
+      
+      if (game.result) {
+        // Parse result format "X-Y" to separate scores
+        const scoreParts = game.result.split('-');
+        if (scoreParts.length === 2) {
+          homeScore = scoreParts[0].trim();
+          awayScore = scoreParts[1].trim();
+        }
+      }
+      
+      return [
+        game.gameOrder.toString(),
+        game.homeTeam,
+        game.awayTeam,
+        homeScore,
+        awayScore,
+        game.result ? 'Completed' : 'Pending'
+      ];
+    });
 
     // Combine headers and rows
     const csvContent = [headers, ...rows]
