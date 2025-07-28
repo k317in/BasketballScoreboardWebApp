@@ -38,7 +38,15 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
     let interval: NodeJS.Timeout;
     if (store.isGameRunning && store.gameTime > 0) {
       interval = setInterval(() => {
-        store.setGameTime(store.gameTime - 1);
+        const newTime = store.gameTime - 1;
+        store.setGameTime(newTime);
+        
+        // Check if game has ended (time reached 0)
+        if (newTime === 0) {
+          store.recordGameResult();
+          store.toggleGameClock(); // Stop the game clock
+        }
+        
         emitUpdate(useScoreboardStore.getState());
       }, 1000);
     }

@@ -49,6 +49,13 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
       interval = setInterval(() => {
         const newTime = store.gameTime - 1;
         store.setGameTime(newTime);
+        
+        // Check if game has ended (time reached 0) and user is table
+        if (newTime === 0 && isTable) {
+          store.recordGameResult();
+          store.toggleGameClock(); // Stop the game clock
+        }
+        
         // Only emit update if user is table (to avoid conflicts)
         if (isTable) {
           emitUpdate(useScoreboardStore.getState());
