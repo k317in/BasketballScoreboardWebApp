@@ -39,6 +39,11 @@ body {
   body {
     padding-top: env(safe-area-inset-top);
   }
+  
+  /* Ensure content doesn't get hidden behind navigation */
+  #root {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  }
 }
 
 /* Digital clock styling */

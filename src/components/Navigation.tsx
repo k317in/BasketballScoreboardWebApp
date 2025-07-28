@@ -21,7 +21,13 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange }) =>
   ] as const;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-700 p-2 sm:p-4 z-50">
+    <nav 
+      className="fixed left-0 right-0 bg-gray-900 border-t border-gray-700 p-2 sm:p-4 z-50"
+      style={{ 
+        bottom: 'env(safe-area-inset-bottom)',
+        paddingBottom: 'calc(0.5rem + env(safe-area-inset-bottom))'
+      }}
+    >
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-center space-x-2 sm:space-x-4 md:space-x-8 overflow-x-auto">
           {navItems.map(({ id, icon: Icon, label, requiresTable }) => {
