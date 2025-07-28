@@ -5,8 +5,6 @@ export interface Team {
   timeouts: number;
   color: string;
   logo?: string;
-  wins: number;
-  losses: number;
 }
 
 export interface GameSettings {

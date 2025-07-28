@@ -38,15 +38,7 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
     let interval: NodeJS.Timeout;
     if (store.isGameRunning && store.gameTime > 0) {
       interval = setInterval(() => {
-        const newTime = store.gameTime - 1;
-        store.setGameTime(newTime);
-        
-        // Check if game has ended (time reached 0)
-        if (newTime === 0) {
-          store.recordGameResult();
-          store.toggleGameClock(); // Stop the game clock
-        }
-        
+        store.setGameTime(store.gameTime - 1);
         emitUpdate(useScoreboardStore.getState());
       }, 1000);
     }
@@ -489,66 +481,23 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
         {/* Reset Game */}
         <div className="bg-gray-900 rounded-lg p-3 sm:p-4 lg:p-6 mt-2 sm:mt-4 lg:mt-6">
           <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-2 sm:mb-4">Reset Game</h2>
-          <div className="space-y-3">
-            <button
-              onClick={handleResetGame}
-              className="flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition-colors text-sm sm:text-base min-h-[44px] sm:min-h-[52px] w-full sm:w-auto"
-            >
-              <RotateCcw size={16} className="sm:w-5 sm:h-5" />
-              Reset Game Data
-            </button>
-            <p className="text-xs sm:text-sm text-gray-400">
-              This will reset scores, fouls, timeouts, and timers. Team names and win/loss records will be preserved.
-            </p>
-          </div>
-        </div>
+          <button
+            onClick={() => {
+              store.resetGameData();
+              emitUpdate(useScoreboardStore.getState());
+            }}
+            className="flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition-colors text-sm sm:text-base min-h-[44px] sm:min-h-[52px]"
+          >
+            <RotateCcw size={16} className="sm:w-5 sm:h-5" />
+            Reset Game Data
+          </button>
+          <p className="text-xs sm:text-sm text-gray-400 mt-1 sm:mt-2">
+            This will reset scores, fouls, timeouts, and timers. Team names will be preserved.
+          </p>
         </div>
       </div>
     </div>
   );
 };
 
-        {/* Win/Loss Management */}
-        <div className="bg-gray-900 rounded-lg p-3 sm:p-4 lg:p-6 mt-2 sm:mt-4 lg:mt-6">
-          <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-2 sm:mb-4">Win/Loss Management</h2>
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-2 sm:gap-4 text-center">
-              <div className="bg-gray-800 rounded-lg p-2 sm:p-3">
-                <div className="text-xs sm:text-sm text-gray-400">{getDisplayTeamName(1)}</div>
-                <div className="text-sm sm:text-base font-bold">
-                  <span className="text-green-400">{store.team1.wins}W</span> - 
-                  <span className="text-red-400">{store.team1.losses}L</span>
-                </div>
-              </div>
-              <div className="bg-gray-800 rounded-lg p-2 sm:p-3">
-                <div className="text-xs sm:text-sm text-gray-400">{getDisplayTeamName(2)}</div>
-                <div className="text-sm sm:text-base font-bold">
-                  <span className="text-green-400">{store.team2.wins}W</span> - 
-                  <span className="text-red-400">{store.team2.losses}L</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-              <button
-                onClick={handleManualRecordResult}
-                className="flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 bg-green-600 hover:bg-green-700 rounded-lg font-semibold transition-colors text-sm sm:text-base min-h-[44px] sm:min-h-[52px] flex-1"
-              >
-                <Plus size={16} className="sm:w-5 sm:h-5" />
-                Record Current Result
-              </button>
-              
-              <button
-                onClick={handleResetWinLoss}
-                className="flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 bg-orange-600 hover:bg-orange-700 rounded-lg font-semibold transition-colors text-sm sm:text-base min-h-[44px] sm:min-h-[52px] flex-1"
-              >
-                <RotateCcw size={16} className="sm:w-5 sm:h-5" />
-                Reset Win/Loss
-              </button>
-            </div>
-            
-            <p className="text-xs sm:text-sm text-gray-400">
-              Win/loss records are automatically updated when the game clock reaches 0:00, or you can manually record the current result.
-            </p>
-          </div>
 export default Controller;
