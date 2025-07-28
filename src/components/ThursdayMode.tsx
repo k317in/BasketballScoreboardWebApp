@@ -14,6 +14,7 @@ import {
   RefreshCw,
   Lock,
   Download,
+  FileDown,
   AlertCircle,
   CheckCircle,
   Clock
@@ -101,6 +102,41 @@ const ThursdayMode: React.FC<ThursdayModeProps> = ({ onBack, onLogin }) => {
     emitUpdate(useThursdayStore.getState());
   };
 
+  const handleExportCSV = () => {
+    if (!isTable) return;
+
+    // Create CSV header
+    const headers = ['Game Order', 'Home Team', 'Away Team', 'Result', 'Status'];
+    
+    // Create CSV rows
+    const rows = store.schedule.map(game => [
+      game.gameOrder.toString(),
+      game.homeTeam,
+      game.awayTeam,
+      game.result || 'Not Played',
+      game.result ? 'Completed' : 'Pending'
+    ]);
+
+    // Combine headers and rows
+    const csvContent = [headers, ...rows]
+      .map(row => row.map(field => `"${field}"`).join(','))
+      .join('\n');
+
+    // Create and download the file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `tuesday-mode-results-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    URL.revokeObjectURL(url);
+  };
   // Only show access restriction if not in Tuesday Mode
   if (!isTable) {
     return (
@@ -177,6 +213,23 @@ const ThursdayMode: React.FC<ThursdayModeProps> = ({ onBack, onLogin }) => {
               </button>
             </div>
 
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+              <div className="flex-1">
+                <h3 className="font-semibold mb-2">Export Game Results</h3>
+                <p className="text-sm text-gray-400">
+                  Download all game results as a CSV file for external use
+                </p>
+              </div>
+
+              <button
+                onClick={handleExportCSV}
+                disabled={!store.isEnabled || store.schedule.length === 0}
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg transition-colors"
+              >
+                <FileDown size={20} />
+                Export CSV
+              </button>
+            </div>
             {error && (
               <div className="flex items-center gap-2 p-3 bg-red-900/50 border border-red-500 rounded-lg text-red-200">
                 <AlertCircle size={20} />
