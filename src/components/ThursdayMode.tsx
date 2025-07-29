@@ -368,6 +368,24 @@ const ThursdayMode: React.FC<ThursdayModeProps> = ({ onBack, onLogin }) => {
             {store.schedule.length > 0 && (
               <div className="bg-gray-900 rounded-lg p-6 mb-6">
                 <h2 className="text-xl font-bold mb-4">Game Schedule</h2>
+                
+                {/* Wins Summary */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3">Team Wins Summary</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {store.teams.map((team) => {
+                      const wins = store.getTeamWins(team.teamName);
+                      return (
+                        <div key={team.teamName} className="bg-gray-800 rounded-lg p-3 text-center">
+                          <div className="text-sm text-gray-400 mb-1">{team.teamName}</div>
+                          <div className="text-2xl font-bold text-green-400">{wins}</div>
+                          <div className="text-xs text-gray-500">wins</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {store.schedule.map((game, index) => (
                     <button
