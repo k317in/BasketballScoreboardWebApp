@@ -478,35 +478,6 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
           </div>
         </div>
 
-        {/* Tuesday Mode Inline Controls */}
-        {thursdayStore.isEnabled && isTable && (
-          <div className="bg-gray-800 border-t border-gray-700 py-3 px-2">
-            <div className="max-w-6xl mx-auto">
-              {/* Wins Counter */}
-              <div className="mb-4">
-                <div className="text-center mb-2">
-                  <span className="text-sm font-semibold text-purple-400">TEAM WINS</span>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {thursdayStore.teams.slice(0, 4).map((team, index) => {
-                    const wins = thursdayStore.getTeamWins(team.teamName);
-                    return (
-                      <div key={team.teamName} className="bg-gray-900 rounded-lg p-2 text-center">
-                        <div className="text-xs text-gray-400 mb-1 truncate">{team.teamName}</div>
-                        <div className="text-lg font-bold">{wins}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Mobile Layout (2 rows) */}
-              <div className="block sm:hidden">
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Reset Game */}
         <div className="bg-gray-900 rounded-lg p-3 sm:p-4 lg:p-6 mt-2 sm:mt-4 lg:mt-6">
           <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-2 sm:mb-4">Reset Game</h2>
