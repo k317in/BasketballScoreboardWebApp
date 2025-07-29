@@ -51,7 +51,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange }) =>
                 title={requiresTable && !isTable ? 'Requires Table access' : ''}
               >
                 <Icon size={18} className="sm:w-5 sm:h-5" />
-                <span className="text-xs sm:text-sm">{label}</span>
+                <span className="hidden sm:block text-xs sm:text-sm">{label}</span>
               </button>
             );
           })}
