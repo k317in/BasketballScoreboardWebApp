@@ -503,6 +503,9 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
               {/* Mobile Layout (2 rows) */}
               <div className="block sm:hidden">
               </div>
+            </div>
+          </div>
+        )}
 
         {/* Reset Game */}
         <div className="bg-gray-900 rounded-lg p-3 sm:p-4 lg:p-6 mt-2 sm:mt-4 lg:mt-6">
