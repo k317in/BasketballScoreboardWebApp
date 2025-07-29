@@ -104,7 +104,9 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
     
     // Capture current game result before switching
     const currentScore = `${store.team1.score}-${store.team2.score}`;
-    thursdayStore.updateGameResult(thursdayStore.currentGameIndex, currentScore);
+    if (store.team1.score > 0 || store.team2.score > 0) {
+      thursdayStore.updateGameResult(thursdayStore.currentGameIndex, currentScore);
+    }
     
     // Switch to previous game
     thursdayStore.previousGame();
@@ -123,7 +125,9 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
     
     // Capture current game result before switching
     const currentScore = `${store.team1.score}-${store.team2.score}`;
-    thursdayStore.updateGameResult(thursdayStore.currentGameIndex, currentScore);
+    if (store.team1.score > 0 || store.team2.score > 0) {
+      thursdayStore.updateGameResult(thursdayStore.currentGameIndex, currentScore);
+    }
     
     // Switch to next game
     thursdayStore.nextGame();
