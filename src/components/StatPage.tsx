@@ -356,11 +356,17 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
 
     if (gameMode === 'normal') {
       // Switch to Tuesday mode
-      thursdayStore.enableThursdayMode();
+      if (thursdayStore.teams.length > 0 && thursdayStore.schedule.length > 0) {
+        thursdayStore.enableThursdayMode();
+      } else {
+        // If no Tuesday data exists, just enable the mode but don't import players yet
+        thursdayStore.enableThursdayMode();
+      }
       setGameMode('tuesday');
     } else {
       // Switch to Normal mode
-      thursdayStore.disableThursdayMode();
+      // Don't disable Thursday store completely, just switch local mode
+      // This preserves the Tuesday data for when user switches back
       setGameMode('normal');
       // Clear players when switching to normal mode
       if (statStore.team1Players.length > 0 || statStore.team2Players.length > 0) {
