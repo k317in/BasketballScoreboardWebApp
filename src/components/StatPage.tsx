@@ -447,7 +447,7 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">Game Mode:</span>
               <button
-                onClick={() => setGameMode(gameMode === 'tuesday' ? 'normal' : 'tuesday')}
+                onClick={handleModeToggle}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
                   gameMode === 'tuesday' 
                     ? 'bg-purple-600 hover:bg-purple-700' 
