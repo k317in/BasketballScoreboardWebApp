@@ -280,24 +280,6 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
       ];
     });
 
-    const csvContent = [headers, ...rows]
-      .map(row => row.map(field => `"${field}"`).join(','))
-      .join('\n');
-
-    // Download CSV
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    
-    link.setAttribute('href', url);
-    link.setAttribute('download', `game-stats-${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    URL.revokeObjectURL(url);
   };
 
   const getTeamName = (teamId: 1 | 2) => {
@@ -440,8 +422,15 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-sm text-gray-400">Period</div>
-                <div className="text-xl font-bold">{scoreboardStore.period}</div>
+                <div className="text-sm text-gray-400">
+                  {gameMode === 'tuesday' ? 'Game' : 'Period'}
+                </div>
+                <div className="text-xl font-bold">
+                  {gameMode === 'tuesday' && thursdayStore.isEnabled 
+                    ? `${thursdayStore.currentGameIndex + 1}/${thursdayStore.getTotalGames()}`
+                    : scoreboardStore.period
+                  }
+                </div>
               </div>
               <div className="text-center">
                 <div className="text-sm text-gray-400">Score</div>
