@@ -257,29 +257,98 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
       : scoreboardStore.team2.name;
     const finalScore = `${scoreboardStore.team1.score}-${scoreboardStore.team2.score}`;
 
-    const gameData = statStore.exportGameData(team1Name, team2Name, finalScore);
-
-    // Create CSV content
-    const headers = [
-      'Player Name', 'Jersey Number', 'Position', 'Team', 
-      'Stat Type', 'Value', 'Game Time', 'Period', 'Timestamp'
-    ];
-
-    const rows = gameData.statEvents.map(event => {
-      const player = gameData.players.find(p => p.id === event.playerId);
-      return [
-        event.playerName,
-        player?.jerseyNumber || '',
-        player?.position || '',
-        `Team ${event.teamId}`,
-        event.statType.replace('_', ' ').toUpperCase(),
-        event.value.toString(),
-        formatTime(event.gameTime),
-        event.period.toString(),
-        new Date(event.systemTimestamp).toLocaleString()
+    if (gameMode === 'tuesday' && thursdayStore.isEnabled) {
+      // Tuesday Mode: Export all games in one CSV file
+      const headers = [
+        'Player Name', 'Jersey Number', 'Game Number', 'Team', 
+        'Stat Type', 'Value', 'Game Time', 'Period', 'Timestamp'
       ];
-    });
 
+      // Get all stat events from all games
+      const allStatEvents = statStore.statEvents;
+      const allPlayers = [...statStore.team1Players, ...statStore.team2Players];
+
+      const rows = allStatEvents.map(event => {
+        const player = allPlayers.find(p => p.id === event.playerId);
+        // Extract game number from gameId or use current game index
+        const gameNumber = event.gameId ? 
+          event.gameId.replace('game_', '') : 
+          thursdayStore.currentGameIndex.toString();
+        
+        return [
+          event.playerName,
+          player?.jerseyNumber || '',
+          (parseInt(gameNumber) + 1).toString(), // Convert to 1-based indexing
+          event.teamId === 1 ? team1Name : team2Name,
+          event.statType.replace('_', ' ').toUpperCase(),
+          event.value.toString(),
+          formatTime(event.gameTime),
+          event.period.toString(),
+          new Date(event.systemTimestamp).toLocaleString()
+        ];
+      });
+
+      const csvContent = [headers, ...rows]
+        .map(row => row.map(field => `"${field}"`).join(','))
+        .join('\n');
+
+      // Download CSV
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `tuesday-mode-all-games-stats-${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      URL.revokeObjectURL(url);
+    } else {
+      // Normal Mode: Export current game only
+      const gameData = statStore.exportGameData(team1Name, team2Name, finalScore);
+
+      const headers = [
+        'Player Name', 'Jersey Number', 'Period', 'Team', 
+        'Stat Type', 'Value', 'Game Time', 'Period', 'Timestamp'
+      ];
+
+      const rows = gameData.statEvents.map(event => {
+        const player = gameData.players.find(p => p.id === event.playerId);
+        return [
+          event.playerName,
+          player?.jerseyNumber || '',
+          event.period.toString(),
+          `Team ${event.teamId}`,
+          event.statType.replace('_', ' ').toUpperCase(),
+          event.value.toString(),
+          formatTime(event.gameTime),
+          event.period.toString(),
+          new Date(event.systemTimestamp).toLocaleString()
+        ];
+      });
+
+      const csvContent = [headers, ...rows]
+        .map(row => row.map(field => `"${field}"`).join(','))
+        .join('\n');
+
+      // Download CSV
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `normal-mode-game-stats-${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      URL.revokeObjectURL(url);
+    }
   };
 
   const getTeamName = (teamId: 1 | 2) => {
@@ -422,15 +491,8 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-sm text-gray-400">
-                  {gameMode === 'tuesday' ? 'Game' : 'Period'}
-                </div>
-                <div className="text-xl font-bold">
-                  {gameMode === 'tuesday' && thursdayStore.isEnabled 
-                    ? `${thursdayStore.currentGameIndex + 1}/${thursdayStore.getTotalGames()}`
-                    : scoreboardStore.period
-                  }
-                </div>
+                <div className="text-sm text-gray-400">Period</div>
+                <div className="text-xl font-bold">{scoreboardStore.period}</div>
               </div>
               <div className="text-center">
                 <div className="text-sm text-gray-400">Score</div>
