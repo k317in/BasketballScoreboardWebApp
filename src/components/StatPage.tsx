@@ -48,13 +48,25 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
   const { emitUpdate: emitStatUpdate } = useStatSync(currentRoom);
 
   const [editingPlayer, setEditingPlayer] = useState<string | null>(null);
-  const [gameMode, setGameMode] = useState<'tuesday' | 'normal'>('normal');
+  const [gameMode, setGameMode] = useState<'tuesday' | 'normal'>(() => {
+    // Initialize based on Thursday store state
+    return thursdayStore.isEnabled ? 'tuesday' : 'normal';
+  });
   const [newPlayerForm, setNewPlayerForm] = useState<{teamId: 1 | 2 | null, name: string, jerseyNumber: string, position: string}>({
     teamId: null,
     name: '',
     jerseyNumber: '',
     position: ''
   });
+
+  // Sync game mode with Thursday store state
+  useEffect(() => {
+    if (thursdayStore.isEnabled && gameMode !== 'tuesday') {
+      setGameMode('tuesday');
+    } else if (!thursdayStore.isEnabled && gameMode !== 'normal') {
+      setGameMode('normal');
+    }
+  }, [thursdayStore.isEnabled, gameMode]);
 
   // Import players from Tuesday Mode when game changes or mode switches
   useEffect(() => {
@@ -85,6 +97,18 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
       }
     }
   }, [thursdayStore.currentGameIndex, thursdayStore.isEnabled, gameMode]);
+
+  // Game clock timer - display live updates
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (scoreboardStore.isGameRunning && scoreboardStore.gameTime > 0) {
+      interval = setInterval(() => {
+        // Force re-render to show live time updates
+        // The actual time update is handled by ScoreboardDisplay
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [scoreboardStore.isGameRunning, scoreboardStore.gameTime]);
 
   const handleScoreboardControl = (action: string) => {
     if (!isTable || !statStore.isLinkedMode) return;
@@ -171,6 +195,22 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
   const handleRemovePlayer = (playerId: string) => {
     if (!isTable) return;
     statStore.removePlayer(playerId);
+    emitStatUpdate(useStatStore.getState());
+  };
+
+  const handleUndoStat = () => {
+    if (!isTable || statStore.statEvents.length === 0) return;
+    
+    const lastEvent = statStore.statEvents[statStore.statEvents.length - 1];
+    
+    // If it's a points stat and we're in linked mode, deduct from scoreboard
+    if (lastEvent.statType === 'points' && statStore.isLinkedMode) {
+      scoreboardStore.updateTeamScore(lastEvent.teamId, -lastEvent.value);
+      emitScoreboardUpdate(useScoreboardStore.getState());
+    }
+    
+    // Remove the stat from history
+    statStore.undoLastStat();
     emitStatUpdate(useStatStore.getState());
   };
 
@@ -725,9 +765,9 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
               <h2 className="text-xl font-bold">Recent Stats</h2>
               <button
                 onClick={() => {
-                  statStore.undoLastStat();
-                  emitStatUpdate(useStatStore.getState());
+                  handleUndoStat();
                 }}
+                disabled={statStore.statEvents.length === 0}
                 className="flex items-center gap-2 px-3 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg transition-colors text-sm"
               >
                 <RotateCcw size={16} />
@@ -742,12 +782,20 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
                     <span className="text-gray-400">•</span>
                     <span className="capitalize">{event.statType.replace('_', ' ')}</span>
                     {event.statType === 'points' && <span className="text-green-400">+{event.value}</span>}
+                    {event.statType === 'points' && statStore.isLinkedMode && (
+                      <span className="text-xs text-blue-400">(Scoreboard)</span>
+                    )}
                   </div>
                   <div className="text-gray-400">
                     {formatTime(event.gameTime)} - P{event.period}
                   </div>
                 </div>
               ))}
+              {statStore.statEvents.length === 0 && (
+                <div className="text-center text-gray-500 py-4">
+                  No stats recorded yet
+                </div>
+              )}
             </div>
           </div>
         )}
