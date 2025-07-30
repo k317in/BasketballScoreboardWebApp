@@ -351,6 +351,27 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
     }
   };
 
+  const handleModeToggle = () => {
+    if (!isTable) return;
+
+    if (gameMode === 'normal') {
+      // Switch to Tuesday mode
+      thursdayStore.enableThursdayMode();
+      setGameMode('tuesday');
+    } else {
+      // Switch to Normal mode
+      thursdayStore.disableThursdayMode();
+      setGameMode('normal');
+      // Clear players when switching to normal mode
+      if (statStore.team1Players.length > 0 || statStore.team2Players.length > 0) {
+        statStore.clearTeamRoster(1);
+        statStore.clearTeamRoster(2);
+      }
+    }
+    
+    emitStatUpdate(useStatStore.getState());
+  };
+
   const getTeamName = (teamId: 1 | 2) => {
     if (gameMode === 'tuesday' && thursdayStore.isEnabled) {
       const currentGame = thursdayStore.getCurrentGame();
