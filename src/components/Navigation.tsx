@@ -31,7 +31,6 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange }) =>
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-center space-x-2 sm:space-x-4 md:space-x-8 overflow-x-auto">
           {navItems.map(({ id, icon: Icon, label, requiresTable }) => {
-            const isDisabled = (requiresTable && !isTable) || id === 'stats';
             const isVisible = !requiresTable || isTable;
             
             if (!isVisible) return null;
