@@ -632,5 +632,3 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
 };
 
 export default StatPage;
-
-export default StatPage
