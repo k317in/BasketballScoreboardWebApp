@@ -473,17 +473,14 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
             {/* Tuesday/Normal Mode Toggle */}
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">Game Mode:</span>
-              <button
-                onClick={handleModeToggle}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
-                  gameMode === 'tuesday' 
-                    ? 'bg-purple-600 hover:bg-purple-700' 
-                    : 'bg-blue-600 hover:bg-blue-700'
-                }`}
-              >
+              <div className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm ${
+                gameMode === 'tuesday' 
+                  ? 'bg-purple-600' 
+                  : 'bg-blue-600'
+              }`}>
                 <Calendar size={16} />
                 {gameMode === 'tuesday' ? 'Tuesday Mode' : 'Normal Game'}
-              </button>
+              </div>
             </div>
           </div>
           
