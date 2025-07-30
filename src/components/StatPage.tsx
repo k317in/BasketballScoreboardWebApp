@@ -47,6 +47,38 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
   const { emitUpdate: emitScoreboardUpdate } = useFirebaseSync(currentRoom);
   const { emitUpdate: emitStatUpdate } = useStatSync(currentRoom);
 
+  // Game clock timer - runs locally for real-time updates
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (scoreboardStore.isGameRunning && scoreboardStore.gameTime > 0) {
+      interval = setInterval(() => {
+        const newTime = scoreboardStore.gameTime - 1;
+        scoreboardStore.setGameTime(newTime);
+        // Only emit update if user is table (to avoid conflicts)
+        if (isTable) {
+          emitScoreboardUpdate(useScoreboardStore.getState());
+        }
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [scoreboardStore.isGameRunning, scoreboardStore.gameTime, emitScoreboardUpdate, isTable]);
+
+  // Shot clock timer - runs locally for real-time updates
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (scoreboardStore.gameSettings.shotClockEnabled && scoreboardStore.isShotClockRunning && scoreboardStore.shotClockTime > 0) {
+      interval = setInterval(() => {
+        const newTime = scoreboardStore.shotClockTime - 1;
+        scoreboardStore.setShotClockTime(newTime);
+        // Only emit update if user is table (to avoid conflicts)
+        if (isTable) {
+          emitScoreboardUpdate(useScoreboardStore.getState());
+        }
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [scoreboardStore.gameSettings.shotClockEnabled, scoreboardStore.isShotClockRunning, scoreboardStore.shotClockTime, emitScoreboardUpdate, isTable]);
+
   const [editingPlayer, setEditingPlayer] = useState<string | null>(null);
   const [gameMode, setGameMode] = useState<'tuesday' | 'normal'>(() => {
     // Initialize based on Thursday store state
