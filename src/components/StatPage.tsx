@@ -27,7 +27,8 @@ import {
   Lock,
   Link,
   Unlink,
-  UserPlus
+  UserPlus,
+  Calendar
 } from 'lucide-react';
 import RoleIndicator from './RoleIndicator';
 import { StatType } from '../types/stats';
@@ -47,6 +48,7 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
   const { emitUpdate: emitStatUpdate } = useStatSync(currentRoom);
 
   const [editingPlayer, setEditingPlayer] = useState<string | null>(null);
+  const [gameMode, setGameMode] = useState<'tuesday' | 'normal'>('normal');
   const [newPlayerForm, setNewPlayerForm] = useState<{teamId: 1 | 2 | null, name: string, jerseyNumber: string, position: string}>({
     teamId: null,
     name: '',
@@ -54,9 +56,9 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
     position: ''
   });
 
-  // Import players from Tuesday Mode when game changes
+  // Import players from Tuesday Mode when game changes or mode switches
   useEffect(() => {
-    if (thursdayStore.isEnabled && statStore.isLinkedMode) {
+    if (gameMode === 'tuesday' && thursdayStore.isEnabled) {
       const currentGame = thursdayStore.getCurrentGame();
       if (currentGame) {
         const homeTeam = thursdayStore.getCurrentHomeTeam();
@@ -74,10 +76,18 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
         }
       }
     }
-  }, [thursdayStore.currentGameIndex, thursdayStore.isEnabled, statStore.isLinkedMode]);
+    // Clear players when switching to normal mode
+    else if (gameMode === 'normal') {
+      if (statStore.team1Players.length > 0 || statStore.team2Players.length > 0) {
+        statStore.clearTeamRoster(1);
+        statStore.clearTeamRoster(2);
+        emitStatUpdate(useStatStore.getState());
+      }
+    }
+  }, [thursdayStore.currentGameIndex, thursdayStore.isEnabled, gameMode]);
 
   const handleScoreboardControl = (action: string) => {
-    if (!isTable) return;
+    if (!isTable || !statStore.isLinkedMode) return;
 
     switch (action) {
       case 'toggle-game-clock':
@@ -101,7 +111,7 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
   };
 
   const handleThursdayControl = (action: string) => {
-    if (!isTable || !thursdayStore.isEnabled) return;
+    if (!isTable || !statStore.isLinkedMode || gameMode !== 'tuesday' || !thursdayStore.isEnabled) return;
 
     switch (action) {
       case 'previous-game':
@@ -123,6 +133,7 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
   const handleRecordStat = (playerId: string, statType: StatType, value: number = 1) => {
     if (!isTable) return;
     
+    // Record the stat
     statStore.recordStat(
       playerId, 
       statType, 
@@ -130,6 +141,16 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
       scoreboardStore.gameTime, 
       scoreboardStore.period
     );
+    
+    // If in linked mode and it's a points stat, update the main scoreboard
+    if (statStore.isLinkedMode && statType === 'points') {
+      const player = [...statStore.team1Players, ...statStore.team2Players].find(p => p.id === playerId);
+      if (player) {
+        scoreboardStore.updateTeamScore(player.teamId, value);
+        emitScoreboardUpdate(useScoreboardStore.getState());
+      }
+    }
+    
     emitStatUpdate(useStatStore.getState());
   };
 
@@ -208,7 +229,7 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
   };
 
   const getTeamName = (teamId: 1 | 2) => {
-    if (thursdayStore.isEnabled && statStore.isLinkedMode) {
+    if (gameMode === 'tuesday' && thursdayStore.isEnabled) {
       const currentGame = thursdayStore.getCurrentGame();
       if (currentGame) {
         return teamId === 1 ? currentGame.homeTeam : currentGame.awayTeam;
@@ -266,8 +287,73 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
           <div className="flex items-center gap-4">
             <TrendingUp size={32} className="text-green-500" />
             <h1 className="text-2xl lg:text-3xl font-bold">Stats Recorder</h1>
+            <div className="flex items-center gap-2">
+              {statStore.isLinkedMode && <div className="px-2 py-1 bg-green-600 rounded text-xs">LINKED</div>}
+              {!statStore.isLinkedMode && <div className="px-2 py-1 bg-gray-600 rounded text-xs">STANDALONE</div>}
+              {gameMode === 'tuesday' && <div className="px-2 py-1 bg-purple-600 rounded text-xs">TUESDAY</div>}
+              {gameMode === 'normal' && <div className="px-2 py-1 bg-blue-600 rounded text-xs">NORMAL</div>}
+            </div>
           </div>
           <RoleIndicator onLogin={onLogin} />
+        </div>
+
+        {/* Mode Controls */}
+        <div className="bg-gray-900 rounded-lg p-4 mb-6">
+          <h2 className="text-lg font-bold mb-4">Mode Controls</h2>
+          <div className="flex flex-wrap gap-4">
+            {/* Link/Standalone Toggle */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">Scoreboard Sync:</span>
+              <button
+                onClick={() => {
+                  statStore.toggleLinkedMode();
+                  emitStatUpdate(useStatStore.getState());
+                }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
+                  statStore.isLinkedMode 
+                    ? 'bg-green-600 hover:bg-green-700' 
+                    : 'bg-gray-600 hover:bg-gray-700'
+                }`}
+              >
+                {statStore.isLinkedMode ? <Link size={16} /> : <Unlink size={16} />}
+                {statStore.isLinkedMode ? 'Linked' : 'Standalone'}
+              </button>
+            </div>
+
+            {/* Tuesday/Normal Mode Toggle */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">Game Mode:</span>
+              <button
+                onClick={() => setGameMode(gameMode === 'tuesday' ? 'normal' : 'tuesday')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
+                  gameMode === 'tuesday' 
+                    ? 'bg-purple-600 hover:bg-purple-700' 
+                    : 'bg-blue-600 hover:bg-blue-700'
+                }`}
+              >
+                <Calendar size={16} />
+                {gameMode === 'tuesday' ? 'Tuesday Mode' : 'Normal Game'}
+              </button>
+            </div>
+          </div>
+          
+          {/* Mode Descriptions */}
+          <div className="mt-4 text-sm text-gray-400">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <strong className="text-green-400">Linked Mode:</strong> Stats and controls sync with main scoreboard
+              </div>
+              <div>
+                <strong className="text-gray-400">Standalone Mode:</strong> Stats recorded independently, no scoreboard sync
+              </div>
+              <div>
+                <strong className="text-purple-400">Tuesday Mode:</strong> Players imported from Tuesday schedule
+              </div>
+              <div>
+                <strong className="text-blue-400">Normal Game:</strong> Manual player management with team settings
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Mini Scoreboard Control Panel */}
@@ -298,11 +384,15 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
               {/* Game Clock Controls */}
               <button
                 onClick={() => handleScoreboardControl('toggle-game-clock')}
+                disabled={!statStore.isLinkedMode}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg font-semibold transition-colors text-sm ${
-                  scoreboardStore.isGameRunning 
-                    ? 'bg-red-600 hover:bg-red-700' 
-                    : 'bg-green-600 hover:bg-green-700'
+                  !statStore.isLinkedMode
+                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    : scoreboardStore.isGameRunning 
+                      ? 'bg-red-600 hover:bg-red-700' 
+                      : 'bg-green-600 hover:bg-green-700'
                 }`}
+                title={!statStore.isLinkedMode ? 'Only available in Linked mode' : ''}
               >
                 {scoreboardStore.isGameRunning ? <Pause size={16} /> : <Play size={16} />}
                 {scoreboardStore.isGameRunning ? 'Pause' : 'Start'}
@@ -310,7 +400,13 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
 
               <button
                 onClick={() => handleScoreboardControl('reset-game-clock')}
-                className="flex items-center gap-2 px-3 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg font-semibold transition-colors text-sm"
+                disabled={!statStore.isLinkedMode}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg font-semibold transition-colors text-sm ${
+                  !statStore.isLinkedMode
+                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    : 'bg-orange-600 hover:bg-orange-700'
+                }`}
+                title={!statStore.isLinkedMode ? 'Only available in Linked mode' : ''}
               >
                 <RotateCcw size={16} />
                 Reset
@@ -319,8 +415,9 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
               {/* Period Controls */}
               <button
                 onClick={() => handleScoreboardControl('previous-period')}
-                disabled={scoreboardStore.period <= 1}
+                disabled={!statStore.isLinkedMode || scoreboardStore.period <= 1}
                 className="flex items-center gap-2 px-3 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-800 disabled:text-gray-500 rounded-lg transition-colors text-sm"
+                title={!statStore.isLinkedMode ? 'Only available in Linked mode' : ''}
               >
                 <Minus size={16} />
                 Period
@@ -328,20 +425,22 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
 
               <button
                 onClick={() => handleScoreboardControl('next-period')}
-                disabled={scoreboardStore.period >= scoreboardStore.gameSettings.periodCount}
+                disabled={!statStore.isLinkedMode || scoreboardStore.period >= scoreboardStore.gameSettings.periodCount}
                 className="flex items-center gap-2 px-3 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-800 disabled:text-gray-500 rounded-lg transition-colors text-sm"
+                title={!statStore.isLinkedMode ? 'Only available in Linked mode' : ''}
               >
                 <Plus size={16} />
                 Period
               </button>
 
               {/* Tuesday Mode Controls */}
-              {thursdayStore.isEnabled && (
+              {gameMode === 'tuesday' && thursdayStore.isEnabled && (
                 <>
                   <button
                     onClick={() => handleThursdayControl('previous-game')}
-                    disabled={!thursdayStore.canGoPrevious()}
+                    disabled={!statStore.isLinkedMode || !thursdayStore.canGoPrevious()}
                     className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-800 disabled:text-gray-500 rounded-lg transition-colors text-sm"
+                    title={!statStore.isLinkedMode ? 'Only available in Linked mode' : ''}
                   >
                     <SkipBack size={16} />
                     Last Game
@@ -349,30 +448,15 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
 
                   <button
                     onClick={() => handleThursdayControl('next-game')}
-                    disabled={!thursdayStore.canGoNext()}
+                    disabled={!statStore.isLinkedMode || !thursdayStore.canGoNext()}
                     className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-800 disabled:text-gray-500 rounded-lg transition-colors text-sm"
+                    title={!statStore.isLinkedMode ? 'Only available in Linked mode' : ''}
                   >
                     Next Game
                     <SkipForward size={16} />
                   </button>
                 </>
               )}
-
-              {/* Mode Toggle */}
-              <button
-                onClick={() => {
-                  statStore.toggleLinkedMode();
-                  emitStatUpdate(useStatStore.getState());
-                }}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg font-semibold transition-colors text-sm ${
-                  statStore.isLinkedMode 
-                    ? 'bg-green-600 hover:bg-green-700' 
-                    : 'bg-gray-600 hover:bg-gray-700'
-                }`}
-              >
-                {statStore.isLinkedMode ? <Link size={16} /> : <Unlink size={16} />}
-                {statStore.isLinkedMode ? 'Linked' : 'Standalone'}
-              </button>
 
               {/* Export */}
               <button
@@ -393,18 +477,21 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-blue-400">
                 {getTeamName(1)} {thursdayStore.isEnabled && '(Home)'}
+                {gameMode === 'tuesday' && <span className="text-xs text-purple-400 ml-2">Tuesday</span>}
               </h2>
-              <button
-                onClick={() => setNewPlayerForm({ ...newPlayerForm, teamId: 1 })}
-                className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm"
-              >
-                <UserPlus size={16} />
-                Add Player
-              </button>
+              {gameMode === 'normal' && (
+                <button
+                  onClick={() => setNewPlayerForm({ ...newPlayerForm, teamId: 1 })}
+                  className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm"
+                >
+                  <UserPlus size={16} />
+                  Add Player
+                </button>
+              )}
             </div>
 
             {/* Add Player Form */}
-            {newPlayerForm.teamId === 1 && (
+            {gameMode === 'normal' && newPlayerForm.teamId === 1 && (
               <div className="bg-gray-800 rounded-lg p-3 mb-4">
                 <div className="grid grid-cols-2 gap-2 mb-3">
                   <input
@@ -457,13 +544,16 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
                         <span className="font-semibold">#{player.jerseyNumber}</span>
                         <span>{player.name}</span>
                         <span className="text-xs text-gray-400">({player.position})</span>
+                        {gameMode === 'tuesday' && <span className="text-xs text-purple-400">Tuesday</span>}
                       </div>
-                      <button
-                        onClick={() => handleRemovePlayer(player.id)}
-                        className="p-1 text-red-400 hover:text-red-300"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                      {gameMode === 'normal' && (
+                        <button
+                          onClick={() => handleRemovePlayer(player.id)}
+                          className="p-1 text-red-400 hover:text-red-300"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
                     </div>
                     
                     {/* Player Stats Summary */}
@@ -478,9 +568,17 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
                           key={`${stat.type}-${stat.value}`}
                           onClick={() => handleRecordStat(player.id, stat.type, stat.value)}
                           className={`flex items-center justify-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-colors ${stat.color}`}
+                          title={
+                            !statStore.isLinkedMode && stat.type === 'points' 
+                              ? 'Points recorded in stats only (Standalone mode)' 
+                              : ''
+                          }
                         >
                           <stat.icon size={12} />
                           {stat.label}
+                          {!statStore.isLinkedMode && stat.type === 'points' && (
+                            <span className="text-xs opacity-60">*</span>
+                          )}
                         </button>
                       ))}
                     </div>
@@ -495,18 +593,21 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-red-400">
                 {getTeamName(2)} {thursdayStore.isEnabled && '(Away)'}
+                {gameMode === 'tuesday' && <span className="text-xs text-purple-400 ml-2">Tuesday</span>}
               </h2>
-              <button
-                onClick={() => setNewPlayerForm({ ...newPlayerForm, teamId: 2 })}
-                className="flex items-center gap-2 px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors text-sm"
-              >
-                <UserPlus size={16} />
-                Add Player
-              </button>
+              {gameMode === 'normal' && (
+                <button
+                  onClick={() => setNewPlayerForm({ ...newPlayerForm, teamId: 2 })}
+                  className="flex items-center gap-2 px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors text-sm"
+                >
+                  <UserPlus size={16} />
+                  Add Player
+                </button>
+              )}
             </div>
 
             {/* Add Player Form */}
-            {newPlayerForm.teamId === 2 && (
+            {gameMode === 'normal' && newPlayerForm.teamId === 2 && (
               <div className="bg-gray-800 rounded-lg p-3 mb-4">
                 <div className="grid grid-cols-2 gap-2 mb-3">
                   <input
@@ -559,13 +660,16 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
                         <span className="font-semibold">#{player.jerseyNumber}</span>
                         <span>{player.name}</span>
                         <span className="text-xs text-gray-400">({player.position})</span>
+                        {gameMode === 'tuesday' && <span className="text-xs text-purple-400">Tuesday</span>}
                       </div>
-                      <button
-                        onClick={() => handleRemovePlayer(player.id)}
-                        className="p-1 text-red-400 hover:text-red-300"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                      {gameMode === 'normal' && (
+                        <button
+                          onClick={() => handleRemovePlayer(player.id)}
+                          className="p-1 text-red-400 hover:text-red-300"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
                     </div>
                     
                     {/* Player Stats Summary */}
@@ -580,9 +684,17 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
                           key={`${stat.type}-${stat.value}`}
                           onClick={() => handleRecordStat(player.id, stat.type, stat.value)}
                           className={`flex items-center justify-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-colors ${stat.color}`}
+                          title={
+                            !statStore.isLinkedMode && stat.type === 'points' 
+                              ? 'Points recorded in stats only (Standalone mode)' 
+                              : ''
+                          }
                         >
                           <stat.icon size={12} />
                           {stat.label}
+                          {!statStore.isLinkedMode && stat.type === 'points' && (
+                            <span className="text-xs opacity-60">*</span>
+                          )}
                         </button>
                       ))}
                     </div>
@@ -592,6 +704,19 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
             </div>
           </div>
         </div>
+
+        {/* Mode Information */}
+        {!statStore.isLinkedMode && (
+          <div className="bg-yellow-900/30 border border-yellow-600 rounded-lg p-3 mb-6">
+            <div className="flex items-center gap-2 text-yellow-200">
+              <Unlink size={16} />
+              <span className="text-sm">
+                <strong>Standalone Mode:</strong> Point buttons marked with * record stats only and don't update the main scoreboard. 
+                Mini scoreboard controls are disabled.
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Recent Stats */}
         {statStore.statEvents.length > 0 && (
