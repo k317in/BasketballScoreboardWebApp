@@ -491,8 +491,15 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-sm text-gray-400">Period</div>
-                <div className="text-xl font-bold">{scoreboardStore.period}</div>
+                <div className="text-sm text-gray-400">
+                  {gameMode === 'tuesday' && thursdayStore.isEnabled ? 'Game' : 'Period'}
+                </div>
+                <div className="text-xl font-bold">
+                  {gameMode === 'tuesday' && thursdayStore.isEnabled 
+                    ? `${thursdayStore.currentGameIndex + 1}/${thursdayStore.getTotalGames()}`
+                    : scoreboardStore.period
+                  }
+                </div>
               </div>
               <div className="text-center">
                 <div className="text-sm text-gray-400">Score</div>
