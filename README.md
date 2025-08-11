@@ -86,6 +86,12 @@ A real-time basketball scoreboard web application built with React, Firebase, an
            ".read": true,
            ".write": true
          }
+        },
+        "thursday": {
+          "$roomId": {
+            ".read": true,
+            ".write": true
+          }
        }
      }
    }
