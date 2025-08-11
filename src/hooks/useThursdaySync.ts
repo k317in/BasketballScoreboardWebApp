@@ -71,7 +71,22 @@ export const useThursdaySync = (roomId: string = 'default-room') => {
 
     // Start listening
     const unsubscribe = onValue(thursdayRef, handleDataChange, (error) => {
-      console.error('Thursday Firebase listener error:', error);
+      if (error.code === 'PERMISSION_DENIED') {
+        console.warn('Thursday mode data access denied. Please check Firebase database rules.');
+        console.warn('Add this rule to your Firebase Realtime Database:');
+        console.warn(`{
+  "rules": {
+    "thursday": {
+      "$roomId": {
+        ".read": true,
+        ".write": true
+      }
+    }
+  }
+}`);
+      } else {
+        console.error('Thursday Firebase listener error:', error);
+      }
     });
 
     unsubscribeRef.current = unsubscribe;
