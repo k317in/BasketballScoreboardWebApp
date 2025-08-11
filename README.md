@@ -81,6 +81,53 @@ A real-time basketball scoreboard web application built with React, Firebase, an
    ```json
    {
      "rules": {
+       // Default closed (conservative)
+       ".read": false,
+       ".write": false,
+
+       "games": {
+         // Everyone can read scores (if you need private, change true to "auth != null")
+         ".read": true,
+         "$gameId": {
+           // Only users with roles can write
+           ".write": "auth != null && (root.child('roles').child(auth.uid).val() == 'admin' || root.child('roles').child(auth.uid).val() == 'scorer')",
+
+           // Data validation (prevent random writes)
+           "homeScore": {
+             ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 300"
+           },
+           "awayScore": {
+             ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 300"
+           },
+           "period": {
+             ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 8"
+           },
+           "shotClock": {
+             ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 60"
+           },
+           "fouls": {
+             ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10"
+           }
+         }
+       },
+
+       "roles": {
+         // Role table is not public
+         ".read": false,
+         "$uid": {
+           // Only admin (using custom claims) can assign roles
+           ".write": "auth != null && auth.token.admin === true",
+           ".validate": "newData.val() == 'admin' || newData.val() == 'scorer'"
+         }
+       },
+
+       "thursday": {
+         "$roomId": {
+           ".read": true,
+           ".write": true
+         }
+       },
+
        "scoreboards": {
          "$roomId": {
            ".read": true,
