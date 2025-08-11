@@ -712,7 +712,7 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
                     
                     {/* Player Stats Summary */}
                     <div className="text-xs text-gray-400 mb-2">
-                      PTS: {playerStats.points} | REB: {playerStats.rebounds} | AST: {playerStats.assists} | STL: {playerStats.steals}
+                      PTS: {playerStats.points} | REB: {playerStats.rebounds} | AST: {playerStats.assists} | STL: {playerStats.steals} | TO: {playerStats.turnovers}
                     </div>
 
                     {/* Stat Buttons */}
@@ -828,7 +828,7 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
                     
                     {/* Player Stats Summary */}
                     <div className="text-xs text-gray-400 mb-2">
-                      PTS: {playerStats.points} | REB: {playerStats.rebounds} | AST: {playerStats.assists} | STL: {playerStats.steals}
+                      PTS: {playerStats.points} | REB: {playerStats.rebounds} | AST: {playerStats.assists} | STL: {playerStats.steals} | TO: {playerStats.turnovers}
                     </div>
 
                     {/* Stat Buttons */}
