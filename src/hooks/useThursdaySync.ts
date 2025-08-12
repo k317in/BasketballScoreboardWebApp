@@ -2,10 +2,12 @@ import { useEffect, useRef, useCallback } from 'react';
 import { ref, onValue, set, off } from 'firebase/database';
 import { database } from '../config/firebase';
 import { useThursdayStore } from '../store/thursdayStore';
+import { useAuthStore } from '../store/authStore';
 import { ThursdayModeState } from '../types/thursday';
 
 export const useThursdaySync = (roomId: string = 'default-room') => {
   const store = useThursdayStore();
+  const { isAuthenticated, isTable } = useAuthStore();
   const isUpdatingRef = useRef(false);
   const dbRef = useRef(ref(database, `thursday/${roomId}`));
   const unsubscribeRef = useRef<(() => void) | null>(null);
@@ -87,6 +89,12 @@ export const useThursdaySync = (roomId: string = 'default-room') => {
   const emitUpdate = useCallback(async (state: ThursdayModeState) => {
     if (isUpdatingRef.current) return;
 
+    // Only allow updates if user is authenticated and has table permissions
+    if (!isAuthenticated || !isTable) {
+      console.warn('Cannot update Thursday Firebase: User not authenticated or lacks table permissions');
+      return;
+    }
+
     try {
       console.log('Emitting Thursday update to Firebase:', state);
       
@@ -104,7 +112,7 @@ export const useThursdaySync = (roomId: string = 'default-room') => {
     } catch (error) {
       console.error('Error updating Thursday Firebase:', error);
     }
-  }, []);
+  }, [isAuthenticated, isTable]);
 
   return { emitUpdate };
 };
