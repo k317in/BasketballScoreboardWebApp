@@ -594,7 +594,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
                     className="w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 mx-auto mb-1 sm:mb-2 rounded object-cover"
                   />
                 )}
-                <h2 className="text-sm sm:text-xl md:text-2xl lg:text-4xl font-bold">{getDisplayTeamName(1)}</h2>
+                <h2 className="text-sm sm:text-xl md:text-2xl lg:text-[4rem] font-bold">{getDisplayTeamName(1)}</h2>
               </div>
             </div>
             
@@ -615,7 +615,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
                     className="w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 mx-auto mb-1 sm:mb-2 rounded object-cover"
                   />
                 )}
-                <h2 className="text-sm sm:text-xl md:text-2xl lg:text-4xl font-bold">{getDisplayTeamName(2)}</h2>
+                <h2 className="text-sm sm:text-xl md:text-2xl lg:text-[4rem] font-bold">{getDisplayTeamName(2)}</h2>
               </div>
             </div>
             
