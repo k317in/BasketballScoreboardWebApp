@@ -626,7 +626,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
             
             {/* Main Clock */}
             <div className="flex flex-col items-center justify-center bg-gray-900 rounded-lg p-2 sm:p-4">
-              <span className="text-xs sm:text-lg md:text-xl lg:text-2xl font-bold">TIME</span>
+              
               <span className={`text-lg sm:text-2xl md:text-4xl lg:text-[6rem] font-bold ${store.gameTime <= 60 ? 'text-red-500' : ''}`}>
                 {formatTime(store.gameTime)}
               </span>
