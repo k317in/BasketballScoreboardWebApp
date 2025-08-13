@@ -424,7 +424,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
                   <img 
                     src={getDisplayTeamLogo(2)} 
                     alt={`${getDisplayTeamName(2)} logo`}
-                    className="w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 mx-auto mb-1 sm:mb-2 rounded object-cover"
+                    className="w-10 h-10 sm:w-8 sm:h-8 lg:w-12 lg:h-12 mx-auto mb-1 sm:mb-2 rounded object-cover"
                   />
                 )}
                 <h2 className="text-sm sm:text-xl md:text-2xl lg:text-4xl font-bold">{getDisplayTeamName(2)}</h2>
