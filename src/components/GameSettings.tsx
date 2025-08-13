@@ -1,6 +1,5 @@
 import React from 'react';
 import { useScoreboardStore } from '../store/scoreboardStore';
-import { useThemeStore } from '../store/themeStore';
 import { useAuthStore } from '../store/authStore';
 import { useRoomStore } from '../store/roomStore';
 import { useFirebaseSync } from '../hooks/useFirebaseSync';
