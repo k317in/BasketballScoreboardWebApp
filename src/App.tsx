@@ -29,7 +29,9 @@ function App() {
       case 'login':
         return <Login onBack={handleBackFromLogin} />;
       case 'display':
-        return <ScoreboardDisplay onBack={() => setCurrentView('display')} onLogin={handleLogin} />;
+        return currentTheme === 'flip' 
+          ? <FlipScoreboardDisplay onLogin={handleLogin} />
+          : <ScoreboardDisplay onLogin={handleLogin} />;
       case 'controller':
         return <Controller onBack={() => setCurrentView('display')} onLogin={handleLogin} />;
       case 'team-settings':
@@ -41,7 +43,9 @@ function App() {
       case 'stats':
         return <StatPage onBack={() => setCurrentView('display')} onLogin={handleLogin} />;
       default:
-        return <ScoreboardDisplay onBack={() => setCurrentView('display')} onLogin={handleLogin} />;
+        return currentTheme === 'flip' 
+          ? <FlipScoreboardDisplay onLogin={handleLogin} />
+          : <ScoreboardDisplay onLogin={handleLogin} />;
     }
   };
 
