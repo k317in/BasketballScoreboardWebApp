@@ -591,7 +591,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
                 style={{ backgroundColor: store.team1.color }}
               >
                 <span className="text-white font-bold text-xs sm:text-lg lg:text-xl drop-shadow-lg">
-                  {getDisplayTeamName(1)} Color Bar
+                  {getDisplayTeamName(1)}
                 </span>
               </div>
             </div>
@@ -610,7 +610,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
                 style={{ backgroundColor: store.team2.color }}
               >
                 <span className="text-white font-bold text-xs sm:text-lg lg:text-xl drop-shadow-lg">
-                  {getDisplayTeamName(2)} Color Bar
+                  {getDisplayTeamName(2)}
                 </span>
               </div>
             </div>
