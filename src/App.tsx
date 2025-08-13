@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import '@fontsource/orbitron/400.css';
 import '@fontsource/orbitron/700.css';
 import '@fontsource/orbitron/900.css';
-import { useThemeStore } from './store/themeStore';
 import ScoreboardDisplay from './components/ScoreboardDisplay';
-import FlipScoreboardDisplay from './components/FlipScoreboardDisplay';
 import Controller from './components/Controller';
 import TeamSettings from './components/TeamSettings';
 import GameSettings from './components/GameSettings';
@@ -17,7 +15,6 @@ type ViewType = 'display' | 'team-settings' | 'game-settings' | 'stats' | 'contr
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('display');
-  const { currentTheme } = useThemeStore();
 
   const handleLogin = () => {
     setCurrentView('login');
@@ -32,9 +29,7 @@ function App() {
       case 'login':
         return <Login onBack={handleBackFromLogin} />;
       case 'display':
-        return currentTheme === 'flip' 
-          ? <FlipScoreboardDisplay onLogin={handleLogin} />
-          : <ScoreboardDisplay onLogin={handleLogin} />;
+        return <ScoreboardDisplay onBack={() => setCurrentView('display')} onLogin={handleLogin} />;
       case 'controller':
         return <Controller onBack={() => setCurrentView('display')} onLogin={handleLogin} />;
       case 'team-settings':
@@ -46,9 +41,7 @@ function App() {
       case 'stats':
         return <StatPage onBack={() => setCurrentView('display')} onLogin={handleLogin} />;
       default:
-        return currentTheme === 'flip' 
-          ? <FlipScoreboardDisplay onLogin={handleLogin} />
-          : <ScoreboardDisplay onLogin={handleLogin} />;
+        return <ScoreboardDisplay onBack={() => setCurrentView('display')} onLogin={handleLogin} />;
     }
   };
 
