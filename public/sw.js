@@ -1,8 +1,6 @@
-const CACHE_NAME = 'basketball-scoreboard-v1';
+const CACHE_NAME = 'basketball-scoreboard-v2';
 const urlsToCache = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
   '/manifest.json'
 ];
 
@@ -11,6 +9,25 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(urlsToCache))
   );
+  // Force the waiting service worker to become the active service worker
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          // Delete old caches
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  // Claim all clients immediately
+  return self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
