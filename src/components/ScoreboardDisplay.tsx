@@ -463,7 +463,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
             
             {/* Team 1 Score */}
             <div className="flex items-center justify-center bg-gray-900 rounded-lg p-2 sm:p-4 col-span-2">
-              <span className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold">{store.team1.score}</span>
+              <span className="text-3xl sm:text-4xl md:text-6xl lg:text-[12rem] font-bold">{store.team1.score}</span>
             </div>
             
             {/* Main Clock */}
@@ -476,7 +476,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
             
             {/* Team 2 Score */}
             <div className="flex items-center justify-center bg-gray-900 rounded-lg p-2 sm:p-4 col-span-2">
-              <span className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold">{store.team2.score}</span>
+              <span className="text-3xl sm:text-4xl md:text-6xl lg:text-[12rem] font-bold">{store.team2.score}</span>
             </div>
             
             {/* Team 1 Fouls + Timeouts (Combined to match Team 1 Score width) */}
