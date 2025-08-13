@@ -2,7 +2,11 @@
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      fontSize: {
+        '8xl': ['12rem', { lineHeight: '1' }],
+      },
+    },
   },
   plugins: [],
 };
