@@ -1,5 +1,6 @@
 import React from 'react';
 import { useScoreboardStore } from '../store/scoreboardStore';
+import { useThemeStore, ThemeType } from '../store/themeStore';
 import { useAuthStore } from '../store/authStore';
 import { useRoomStore } from '../store/roomStore';
 import { useFirebaseSync } from '../hooks/useFirebaseSync';
@@ -13,6 +14,7 @@ interface GameSettingsProps {
 
 const GameSettings: React.FC<GameSettingsProps> = ({ onBack, onLogin }) => {
   const store = useScoreboardStore();
+  const { currentTheme, setTheme } = useThemeStore();
   const { isTable } = useAuthStore();
   const { currentRoom } = useRoomStore();
   const { emitUpdate } = useFirebaseSync(currentRoom);
@@ -22,6 +24,11 @@ const GameSettings: React.FC<GameSettingsProps> = ({ onBack, onLogin }) => {
     if (!isTable) return;
     store.updateGameSettings({ [key]: value });
     emitUpdate(useScoreboardStore.getState());
+  };
+
+  const handleThemeChange = (theme: ThemeType) => {
+    if (!isTable) return;
+    setTheme(theme);
   };
 
   const presetConfigs = [
@@ -306,6 +313,41 @@ const GameSettings: React.FC<GameSettingsProps> = ({ onBack, onLogin }) => {
           <h2 className="text-xl font-bold mb-6">Display Settings</h2>
           
           <div className="space-y-4">
+            {/* Theme Selection */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3">Theme</h3>
+              <div className="space-y-2">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="theme"
+                    value="default"
+                    checked={currentTheme === 'default'}
+                    onChange={() => handleThemeChange('default')}
+                    className="w-4 h-4 text-blue-600 bg-gray-800 border-gray-600 focus:ring-blue-500"
+                  />
+                  <div>
+                    <span className="font-medium">Digital (Default)</span>
+                    <p className="text-sm text-gray-400">Modern digital scoreboard with customizable colors</p>
+                  </div>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="theme"
+                    value="flip"
+                    checked={currentTheme === 'flip'}
+                    onChange={() => handleThemeChange('flip')}
+                    className="w-4 h-4 text-blue-600 bg-gray-800 border-gray-600 focus:ring-blue-500"
+                  />
+                  <div>
+                    <span className="font-medium">Flip Clock (Airport Board)</span>
+                    <p className="text-sm text-gray-400">Classic split-flap display with animated number changes</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
             <div className="flex items-center gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
