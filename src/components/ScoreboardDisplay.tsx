@@ -621,7 +621,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
             
             {/* Team 1 Score */}
             <div className="flex items-center justify-center bg-gray-900 rounded-lg p-2 sm:p-4">
-              <span className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold">{store.team1.score}</span>
+              <span className="text-3xl sm:text-4xl md:text-6xl lg:text-[12rem] font-bold">{store.team1.score}</span>
             </div>
             
             {/* Main Clock */}
