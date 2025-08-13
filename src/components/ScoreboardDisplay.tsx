@@ -586,13 +586,15 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
           <div className="h-full grid grid-cols-3 grid-rows-3 gap-2 sm:gap-4 max-w-6xl mx-auto">
             {/* Team 1 Name */}
             <div className="flex items-center justify-center bg-gray-900 rounded-lg p-2 sm:p-4">
-              <div 
-                className="w-full h-full flex items-center justify-center rounded-lg"
-                style={{ backgroundColor: store.team1.color }}
-              >
-                <span className="text-white font-bold text-xs sm:text-lg lg:text-xl drop-shadow-lg">
-                  Team 1 Color Bar
-                </span>
+              <div className="text-center">
+                {getDisplayTeamLogo(1) && (
+                  <img 
+                    src={getDisplayTeamLogo(1)} 
+                    alt={`${getDisplayTeamName(1)} logo`}
+                    className="w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 mx-auto mb-1 sm:mb-2 rounded object-cover"
+                  />
+                )}
+                <h2 className="text-sm sm:text-xl md:text-2xl lg:text-4xl font-bold">{getDisplayTeamName(1)}</h2>
               </div>
             </div>
             
@@ -605,13 +607,15 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
             
             {/* Team 2 Name */}
             <div className="flex items-center justify-center bg-gray-900 rounded-lg p-2 sm:p-4">
-              <div 
-                className="w-full h-full flex items-center justify-center rounded-lg"
-                style={{ backgroundColor: store.team2.color }}
-              >
-                <span className="text-white font-bold text-xs sm:text-lg lg:text-xl drop-shadow-lg">
-                  Team 2 Color Bar
-                </span>
+              <div className="text-center">
+                {getDisplayTeamLogo(2) && (
+                  <img 
+                    src={getDisplayTeamLogo(2)} 
+                    alt={`${getDisplayTeamName(2)} logo`}
+                    className="w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 mx-auto mb-1 sm:mb-2 rounded object-cover"
+                  />
+                )}
+                <h2 className="text-sm sm:text-xl md:text-2xl lg:text-4xl font-bold">{getDisplayTeamName(2)}</h2>
               </div>
             </div>
             
