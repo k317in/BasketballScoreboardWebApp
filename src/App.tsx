@@ -49,13 +49,12 @@ function App() {
     <div className="min-h-screen bg-black text-white pb-20" style={{ fontFamily: 'Orbitron, monospace' }}>
       {renderCurrentView()}
       {currentView !== 'login' && currentView !== 'display' && (
-        <Navigation currentView={currentView} onViewChange={setCurrentView} showNavOnHover={false} />
+        <Navigation currentView={currentView} onViewChange={setCurrentView} />
       )}
       {currentView === 'display' && (
         <Navigation 
           currentView={currentView} 
           onViewChange={setCurrentView} 
-          showNavOnHover={currentView === 'display'}
         />
       )}
     </div>

@@ -20,6 +20,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
   const { currentRoom, setRoom } = useRoomStore();
   const { emitUpdate } = useFirebaseSync(currentRoom);
   const { emitUpdate: emitThursdayUpdate } = useThursdaySync(currentRoom);
+  const [showHeaderOnHover, setShowHeaderOnHover] = React.useState(false);
   const [showNavOnHover, setShowNavOnHover] = React.useState(false);
 
   // Get team names from Thursday Mode if enabled
@@ -169,7 +170,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
       {/* Header Controls */}
       <div className={`flex flex-col sm:flex-row justify-between items-center p-2 sm:p-4 bg-gray-900 gap-2 transition-all duration-300 ${
         store.isFullscreen 
-          ? showHeaderOnHover 
+          ? showHeaderOnHover
             ? 'translate-y-0 opacity-100' 
             : '-translate-y-full opacity-0'
           : 'translate-y-0 opacity-100'
