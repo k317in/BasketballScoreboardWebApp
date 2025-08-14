@@ -29,7 +29,7 @@ function App() {
       case 'login':
         return <Login onBack={handleBackFromLogin} />;
       case 'display':
-        return <ScoreboardDisplay onLogin={handleLogin} />;
+        return <ScoreboardDisplay onBack={() => setCurrentView('display')} onLogin={handleLogin} />;
       case 'controller':
         return <Controller onBack={() => setCurrentView('display')} onLogin={handleLogin} />;
       case 'team-settings':
@@ -41,21 +41,15 @@ function App() {
       case 'stats':
         return <StatPage onBack={() => setCurrentView('display')} onLogin={handleLogin} />;
       default:
-        return <ScoreboardDisplay onLogin={handleLogin} />;
+        return <ScoreboardDisplay onBack={() => setCurrentView('display')} onLogin={handleLogin} />;
     }
   };
 
   return (
     <div className="min-h-screen bg-black text-white pb-20" style={{ fontFamily: 'Orbitron, monospace' }}>
       {renderCurrentView()}
-      {currentView !== 'login' && currentView !== 'display' && (
+      {currentView !== 'login' && (
         <Navigation currentView={currentView} onViewChange={setCurrentView} />
-      )}
-      {currentView === 'display' && (
-        <Navigation 
-          currentView={currentView} 
-          onViewChange={setCurrentView} 
-        />
       )}
     </div>
   );

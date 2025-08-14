@@ -1,19 +1,15 @@
 import React from 'react';
-import { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
-import { useScoreboardStore } from '../store/scoreboardStore';
+import { useThursdayStore } from '../store/thursdayStore';
 import { Users, Settings, BarChart3, MonitorPlay, Gamepad2, Calendar } from 'lucide-react';
 
 interface NavigationProps {
   currentView: 'display' | 'team-settings' | 'game-settings' | 'stats' | 'controller' | 'login' | 'thursday';
   onViewChange: (view: 'display' | 'team-settings' | 'game-settings' | 'stats' | 'controller' | 'login' | 'tuesday') => void;
-  showNavOnHover?: boolean;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange, showNavOnHover = false }) => {
+const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange }) => {
   const { isTable } = useAuthStore();
-  const { isFullscreen } = useScoreboardStore();
-  const [showOnHover, setShowOnHover] = useState(false);
 
   const navItems = [
     { id: 'display', icon: MonitorPlay, label: 'Scoreboard', requiresTable: false },
@@ -26,19 +22,11 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange, show
 
   return (
     <nav 
-      className={`fixed left-0 right-0 bg-gray-900 border-t border-gray-700 p-2 sm:p-4 z-50 transition-all duration-300 ${
-        isFullscreen && currentView === 'display' 
-          ? showOnHover
-            ? 'translate-y-0 opacity-100' 
-            : 'translate-y-full opacity-0'
-          : 'translate-y-0 opacity-100'
-      }`}
+      className="fixed left-0 right-0 bg-gray-900 border-t border-gray-700 p-2 sm:p-4 z-50"
       style={{ 
         bottom: 'env(safe-area-inset-bottom)',
         paddingBottom: 'calc(0.5rem + env(safe-area-inset-bottom))'
       }}
-      onMouseEnter={() => setShowOnHover(true)}
-      onMouseLeave={() => setShowOnHover(false)}
     >
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-center space-x-2 sm:space-x-4 md:space-x-8 overflow-x-auto">

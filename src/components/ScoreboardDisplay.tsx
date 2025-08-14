@@ -20,8 +20,6 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
   const { currentRoom, setRoom } = useRoomStore();
   const { emitUpdate } = useFirebaseSync(currentRoom);
   const { emitUpdate: emitThursdayUpdate } = useThursdaySync(currentRoom);
-  const [showHeaderOnHover, setShowHeaderOnHover] = React.useState(false);
-  const [showNavOnHover, setShowNavOnHover] = React.useState(false);
 
   // Get team names from Thursday Mode if enabled
   const getDisplayTeamName = (teamNumber: 1 | 2) => {
@@ -168,13 +166,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Header Controls */}
-      <div className={`flex flex-col sm:flex-row justify-between items-center p-2 sm:p-4 bg-gray-900 gap-2 transition-all duration-300 ${
-        store.isFullscreen 
-          ? showHeaderOnHover
-            ? 'translate-y-0 opacity-100' 
-            : '-translate-y-full opacity-0'
-          : 'translate-y-0 opacity-100'
-      }`}>
+      <div className="flex flex-col sm:flex-row justify-between items-center p-2 sm:p-4 bg-gray-900 gap-2">
         <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto"></div>
         
         <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-center sm:justify-end">
@@ -188,22 +180,6 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
           </button>
         </div>
       </div>
-
-      {/* Hover trigger areas for fullscreen mode */}
-      {store.isFullscreen && (
-        <>
-          {/* Top hover area */}
-          <div 
-            className="fixed top-0 left-0 right-0 h-16 z-40 pointer-events-auto"
-            onMouseEnter={() => setShowNavOnHover(true)}
-          />
-          {/* Bottom hover area */}
-          <div 
-            className="fixed bottom-0 left-0 right-0 h-16 z-40 pointer-events-auto"
-            onMouseEnter={() => setShowNavOnHover(true)}
-          />
-        </>
-      )}
 
       {/* Live Indicator for all users */}
       <div className="bg-red-600 text-center py-2">
