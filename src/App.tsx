@@ -10,11 +10,13 @@ import Login from './components/Login';
 import Navigation from './components/Navigation';
 import ThursdayMode from './components/ThursdayMode';
 import StatPage from './components/StatPage';
+import { useScoreboardStore } from './store/scoreboardStore';
 
 type ViewType = 'display' | 'team-settings' | 'game-settings' | 'stats' | 'controller' | 'login' | 'thursday';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('display');
+  const { isFullscreen } = useScoreboardStore();
 
   const handleLogin = () => {
     setCurrentView('login');
@@ -48,7 +50,7 @@ function App() {
   return (
     <div className="min-h-screen bg-black text-white pb-20" style={{ fontFamily: 'Orbitron, monospace' }}>
       {renderCurrentView()}
-      {currentView !== 'login' && (
+      {currentView !== 'login' && !isFullscreen && (
         <Navigation currentView={currentView} onViewChange={setCurrentView} />
       )}
     </div>
