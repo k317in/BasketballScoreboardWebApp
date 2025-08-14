@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { useScoreboardStore } from '../store/scoreboardStore';
 import { Users, Settings, BarChart3, MonitorPlay, Gamepad2, Calendar } from 'lucide-react';
@@ -12,6 +13,7 @@ interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange, showNavOnHover = false }) => {
   const { isTable } = useAuthStore();
   const { isFullscreen } = useScoreboardStore();
+  const [showOnHover, setShowOnHover] = useState(false);
 
   const navItems = [
     { id: 'display', icon: MonitorPlay, label: 'Scoreboard', requiresTable: false },
