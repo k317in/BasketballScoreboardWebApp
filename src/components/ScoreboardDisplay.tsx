@@ -167,7 +167,13 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Header Controls */}
-      <div className="flex flex-col sm:flex-row justify-between items-center p-2 sm:p-4 bg-gray-900 gap-2">
+      <div className={`flex flex-col sm:flex-row justify-between items-center p-2 sm:p-4 bg-gray-900 gap-2 transition-all duration-300 ${
+        store.isFullscreen 
+          ? showHeaderOnHover 
+            ? 'translate-y-0 opacity-100' 
+            : '-translate-y-full opacity-0'
+          : 'translate-y-0 opacity-100'
+      }`}>
         <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto"></div>
         
         <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-center sm:justify-end">
