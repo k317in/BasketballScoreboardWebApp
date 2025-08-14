@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuthStore } from '../store/authStore';
+import { useScoreboardStore } from '../store/scoreboardStore';
 import { useThursdayStore } from '../store/thursdayStore';
 import { Users, Settings, BarChart3, MonitorPlay, Gamepad2, Calendar } from 'lucide-react';
 

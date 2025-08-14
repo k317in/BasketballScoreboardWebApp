@@ -20,6 +20,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
   const { currentRoom, setRoom } = useRoomStore();
   const { emitUpdate } = useFirebaseSync(currentRoom);
   const { emitUpdate: emitThursdayUpdate } = useThursdaySync(currentRoom);
+  const [showNavOnHover, setShowNavOnHover] = React.useState(false);
 
   // Get team names from Thursday Mode if enabled
   const getDisplayTeamName = (teamNumber: 1 | 2) => {
@@ -180,6 +181,22 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
           </button>
         </div>
       </div>
+
+      {/* Hover trigger areas for fullscreen mode */}
+      {store.isFullscreen && (
+        <>
+          {/* Top hover area */}
+          <div 
+            className="fixed top-0 left-0 right-0 h-16 z-40 pointer-events-auto"
+            onMouseEnter={() => setShowNavOnHover(true)}
+          />
+          {/* Bottom hover area */}
+          <div 
+            className="fixed bottom-0 left-0 right-0 h-16 z-40 pointer-events-auto"
+            onMouseEnter={() => setShowNavOnHover(true)}
+          />
+        </>
+      )}
 
       {/* Live Indicator for all users */}
       <div className="bg-red-600 text-center py-2">
