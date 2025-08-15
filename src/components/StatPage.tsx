@@ -76,6 +76,7 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
     }
     return () => clearInterval(interval);
   }, [scoreboardStore.isGameRunning, scoreboardStore.gameTime, scoreboardStore.gameTimeMs, emitScoreboardUpdate, isTable]);
+  }, [scoreboardStore.isGameRunning, scoreboardStore.gameTime, emitScoreboardUpdate, isTable]);
 
   // Shot clock timer - runs locally for real-time updates
   useEffect(() => {
