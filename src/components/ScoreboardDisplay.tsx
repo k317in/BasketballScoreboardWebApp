@@ -365,7 +365,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
             <div className="mt-2 text-center text-xs sm:text-sm text-gray-400">
               Game {thursdayStore.currentGameIndex + 1} of {thursdayStore.getTotalGames()} • 
               Score: {store.team1.score}-{store.team2.score} • 
-              Time: {formatTime(store.gameTime)}
+              Time: {formatTime(store.gameTime, store.gameTimeMs)}
             </div>
           </div>
         </div>
@@ -631,7 +631,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
                 store.gameTime <= 10 ? 'text-red-500 animate-pulse' : 
                 store.gameTime <= 60 ? 'text-yellow-500' : ''
               }`}>
-                {formatTime(store.gameTime, store.gameTimeMs)}
+                {formatTime(store.gameTime)}
               </span>
             </div>
             

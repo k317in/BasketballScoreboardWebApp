@@ -176,7 +176,7 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
                 store.gameTime <= 10 ? 'text-red-500 animate-pulse' : 
                 store.gameTime <= 60 ? 'text-yellow-500' : ''
               }`}>
-                {formatTime(store.gameTime)}
+                {formatTime(store.gameTime, store.gameTimeMs)}
               </div>
             </div>
             <div className="bg-gray-800 rounded-lg p-2 sm:p-3 lg:p-4">

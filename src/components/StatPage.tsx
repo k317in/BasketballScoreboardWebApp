@@ -51,17 +51,28 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (scoreboardStore.isGameRunning && scoreboardStore.gameTime > 0) {
+      // Use 10ms intervals for smooth millisecond countdown
       interval = setInterval(() => {
-        const newTime = scoreboardStore.gameTime - 1;
-        scoreboardStore.setGameTime(newTime);
+        const currentMs = scoreboardStore.gameTimeMs;
+        const currentSeconds = scoreboardStore.gameTime;
+        
+        if (currentMs > 0) {
+          // Decrease milliseconds
+          scoreboardStore.setGameTimeMs(currentMs - 10);
+        } else {
+          // Decrease seconds and reset milliseconds
+          const newTime = currentSeconds - 1;
+          scoreboardStore.setGameTime(newTime);
+          scoreboardStore.setGameTimeMs(990); // Reset to 990ms (99 centiseconds)
+        }
+        
         // Only emit update if user is table (to avoid conflicts)
         if (isTable) {
           emitScoreboardUpdate(useScoreboardStore.getState());
         }
-      }, 1000);
+      }, 10);
     }
     return () => clearInterval(interval);
-  }, [scoreboardStore.isGameRunning, scoreboardStore.gameTime, emitScoreboardUpdate, isTable]);
 
   // Shot clock timer - runs locally for real-time updates
   useEffect(() => {
