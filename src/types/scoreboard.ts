@@ -21,6 +21,7 @@ export interface ScoreboardState {
   team2: Team;
   period: number;
   gameTime: number; // in seconds
+  gameTimeMs: number; // milliseconds component (0-999)
   shotClockTime: number; // in seconds
   isGameRunning: boolean;
   isShotClockRunning: boolean;
