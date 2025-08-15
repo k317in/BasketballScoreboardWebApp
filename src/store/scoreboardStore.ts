@@ -114,6 +114,7 @@ export const useScoreboardStore = create<ScoreboardStore>()(
       // Game actions
       setPeriod: (period) => set({ period }),
       setGameTime: (time) => set({ gameTime: time }),
+      setGameTimeMs: (ms) => set({ gameTimeMs: ms }),
       setShotClockTime: (time) => set({ shotClockTime: time }),
       toggleGameClock: () => set((state) => ({ isGameRunning: !state.isGameRunning })),
       toggleShotClock: () => set((state) => ({ isShotClockRunning: !state.isShotClockRunning })),
