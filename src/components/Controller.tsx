@@ -172,7 +172,10 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-2 lg:gap-4 text-center">
             <div className="bg-gray-800 rounded-lg p-2 sm:p-3 lg:p-4">
               <div className="text-xs sm:text-sm text-gray-400">Game Time</div>
-              <div className={`text-sm sm:text-lg lg:text-2xl font-bold ${store.gameTime <= 60 ? 'text-red-500' : ''}`}>
+              <div className={`text-sm sm:text-lg lg:text-2xl font-bold ${
+                store.gameTime <= 10 ? 'text-red-500 animate-pulse' : 
+                store.gameTime <= 60 ? 'text-yellow-500' : ''
+              }`}>
                 {formatTime(store.gameTime)}
               </div>
             </div>
