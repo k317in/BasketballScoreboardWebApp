@@ -147,6 +147,7 @@ export const useScoreboardStore = create<ScoreboardStore>()(
           team2: { ...defaultTeam, name: 'Away', timeouts: gameSettings.timeoutsPerTeam },
           period: 1,
           gameTime: gameSettings.gameDuration * 60,
+          gameTimeMs: 0,
           shotClockTime: gameSettings.shotClockDuration,
           isGameRunning: false,
           isShotClockRunning: false
