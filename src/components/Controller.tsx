@@ -37,28 +37,17 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (store.isGameRunning && store.gameTime > 0) {
-      // Use 10ms intervals for smooth millisecond countdown
+      // Use 1 second intervals for simple countdown
       interval = setInterval(() => {
-        const currentMs = store.gameTimeMs;
-        const currentSeconds = store.gameTime;
-        
-        if (currentMs > 0) {
-          // Decrease milliseconds
-          store.setGameTimeMs(Math.max(0, currentMs - 10));
-        } else {
-          // Decrease seconds and reset milliseconds
-          if (currentSeconds > 0) {
-            const newTime = currentSeconds - 1;
-            store.setGameTime(newTime);
-            store.setGameTimeMs(990); // Reset to 990ms for next second
-          }
+        if (store.gameTime > 0) {
+          store.setGameTime(store.gameTime - 1);
         }
         
         emitUpdate(useScoreboardStore.getState());
-      }, 10);
+      }, 1000);
     }
     return () => clearInterval(interval);
-  }, [store.isGameRunning, store.gameTime, store.gameTimeMs, emitUpdate]);
+  }, [store.isGameRunning, store.gameTime, emitUpdate]);
 
   // Shot clock timer
   useEffect(() => {
@@ -191,7 +180,7 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
                 store.gameTime <= 10 ? 'text-red-500 animate-pulse' : 
                 store.gameTime <= 60 ? 'text-yellow-500' : ''
               }`}>
-                {formatTime(store.gameTime, store.gameTimeMs)}
+                {formatTime(store.gameTime)}
               </div>
             </div>
             <div className="bg-gray-800 rounded-lg p-2 sm:p-3 lg:p-4">
