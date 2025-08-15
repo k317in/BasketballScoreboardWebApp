@@ -46,31 +46,20 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (store.isGameRunning && store.gameTime > 0) {
-      // Use 10ms intervals for smooth millisecond countdown
+      // Use 1 second intervals for simple countdown
       interval = setInterval(() => {
-        const currentMs = store.gameTimeMs;
-        const currentSeconds = store.gameTime;
-        
-        if (currentMs > 0) {
-          // Decrease milliseconds
-          store.setGameTimeMs(Math.max(0, currentMs - 10));
-        } else {
-          // Decrease seconds and reset milliseconds
-          if (currentSeconds > 0) {
-            const newTime = currentSeconds - 1;
-            store.setGameTime(newTime);
-            store.setGameTimeMs(990); // Reset to 990ms for next second
-          }
+        if (store.gameTime > 0) {
+          store.setGameTime(store.gameTime - 1);
         }
         
         // Only emit update if user is table (to avoid conflicts)
         if (isTable) {
           emitUpdate(useScoreboardStore.getState());
         }
-      }, 10);
+      }, 1000);
     }
     return () => clearInterval(interval);
-  }, [store.isGameRunning, store.gameTime, store.gameTimeMs, emitUpdate, isTable]);
+  }, [store.isGameRunning, store.gameTime, emitUpdate, isTable]);
 
   // Shot clock timer
   useEffect(() => {
@@ -642,10 +631,10 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
             <div className="flex flex-col items-center justify-center bg-gray-900 rounded-lg p-2 sm:p-4">
               
               <span className={`text-lg sm:text-2xl md:text-4xl lg:text-[6rem] font-bold ${
-                store.gameTime <= 10 ? 'text-red-500 animate-pulse' :
+                store.gameTime <= 10 ? 'text-red-500 animate-pulse' : 
                 store.gameTime <= 60 ? 'text-yellow-500' : ''
               }`}>
-                {formatTime(store.gameTime, store.gameTimeMs)}
+                {formatTime(store.gameTime)}
               </span>
             </div>
             
