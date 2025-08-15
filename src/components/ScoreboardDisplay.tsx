@@ -421,12 +421,7 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
             </div>
             
             {/* Team 2 Name */}
-            <div 
-              className="flex items-center justify-center bg-gray-900 rounded-lg p-2 sm:p-4 col-span-2 bg-cover bg-center bg-no-repeat relative"
-              style={getDisplayTeamLogo(2) ? {
-                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${getDisplayTeamLogo(2)})`,
-              } : {}}
-            >
+            <div className="flex items-center justify-center bg-gray-900 rounded-lg p-2 sm:p-4 col-span-2">
               <div className="text-center">
                 {getDisplayTeamLogo(2) && (
                   <img 
@@ -595,6 +590,13 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
             {/* Team 1 Name */}
             <div className="flex items-center justify-center bg-gray-900 rounded-lg p-2 sm:p-4">
               <div className="text-center">
+                {getDisplayTeamLogo(1) && (
+                  <img 
+                    src={getDisplayTeamLogo(1)} 
+                    alt={`${getDisplayTeamName(1)} logo`}
+                    className="w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 mx-auto mb-1 sm:mb-2 rounded object-cover"
+                  />
+                )}
                 <h2 className="text-sm sm:text-xl md:text-2xl lg:text-[4rem] font-bold">{getDisplayTeamName(1)}</h2>
               </div>
             </div>
