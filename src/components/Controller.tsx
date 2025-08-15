@@ -37,13 +37,26 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (store.isGameRunning && store.gameTime > 0) {
+      // Use 10ms intervals for smooth millisecond countdown
       interval = setInterval(() => {
-        store.setGameTime(store.gameTime - 1);
+        const currentMs = store.gameTimeMs;
+        const currentSeconds = store.gameTime;
+        
+        if (currentMs > 0) {
+          // Decrease milliseconds
+          store.setGameTimeMs(currentMs - 10);
+        } else {
+          // Decrease seconds and reset milliseconds
+          const newTime = currentSeconds - 1;
+          store.setGameTime(newTime);
+          store.setGameTimeMs(990); // Reset to 990ms (99 centiseconds)
+        }
+        
         emitUpdate(useScoreboardStore.getState());
-      }, 1000);
+      }, 10);
     }
     return () => clearInterval(interval);
-  }, [store.isGameRunning, store.gameTime, emitUpdate]);
+  }, [store.isGameRunning, store.gameTime, store.gameTimeMs, emitUpdate]);
 
   // Shot clock timer
   useEffect(() => {
@@ -176,7 +189,7 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
                 store.gameTime <= 10 ? 'text-red-500 animate-pulse' : 
                 store.gameTime <= 60 ? 'text-yellow-500' : ''
               }`}>
-                {formatTime(store.gameTime, store.gameTimeMs)}
+                {formatTime(store.gameTime)}
               </div>
             </div>
             <div className="bg-gray-800 rounded-lg p-2 sm:p-3 lg:p-4">
@@ -269,29 +282,29 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
         {/* Period Controls */}
         {store.isFullMode && store.gameSettings.periodCount > 1 && (
           <div className="bg-gray-900 rounded-lg p-3 sm:p-4 lg:p-6 mb-2 sm:mb-4">
-          <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-2 sm:mb-4">Period Control</h2>
-          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 flex-wrap">
-            <button
-              onClick={() => handlePeriodChange(-1)}
-              disabled={store.period <= 1}
-              className="flex items-center gap-2 px-3 sm:px-4 py-3 sm:py-4 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-800 disabled:text-gray-500 rounded-lg transition-colors text-sm sm:text-base min-h-[44px] sm:min-h-[52px]"
-            >
-              <Minus size={16} className="sm:w-5 sm:h-5" />
-              Previous
-            </button>
-            <div className="px-4 sm:px-6 py-3 sm:py-4 bg-gray-800 rounded-lg min-h-[44px] sm:min-h-[52px] flex items-center">
-              <span className="text-sm sm:text-base lg:text-lg font-bold">Period {store.period}</span>
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-2 sm:mb-4">Period Control</h2>
+            <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 flex-wrap">
+              <button
+                onClick={() => handlePeriodChange(-1)}
+                disabled={store.period <= 1}
+                className="flex items-center gap-2 px-3 sm:px-4 py-3 sm:py-4 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-800 disabled:text-gray-500 rounded-lg transition-colors text-sm sm:text-base min-h-[44px] sm:min-h-[52px]"
+              >
+                <Minus size={16} className="sm:w-5 sm:h-5" />
+                Previous
+              </button>
+              <div className="px-4 sm:px-6 py-3 sm:py-4 bg-gray-800 rounded-lg min-h-[44px] sm:min-h-[52px] flex items-center">
+                <span className="text-sm sm:text-base lg:text-lg font-bold">Period {store.period}</span>
+              </div>
+              <button
+                onClick={() => handlePeriodChange(1)}
+                disabled={store.period >= store.gameSettings.periodCount}
+                className="flex items-center gap-2 px-3 sm:px-4 py-3 sm:py-4 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-800 disabled:text-gray-500 rounded-lg transition-colors text-sm sm:text-base min-h-[44px] sm:min-h-[52px]"
+              >
+                <Plus size={16} className="sm:w-5 sm:h-5" />
+                Next
+              </button>
             </div>
-            <button
-              onClick={() => handlePeriodChange(1)}
-              disabled={store.period >= store.gameSettings.periodCount}
-              className="flex items-center gap-2 px-3 sm:px-4 py-3 sm:py-4 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-800 disabled:text-gray-500 rounded-lg transition-colors text-sm sm:text-base min-h-[44px] sm:min-h-[52px]"
-            >
-              <Plus size={16} className="sm:w-5 sm:h-5" />
-              Next
-            </button>
           </div>
-        </div>
         )}
 
         {/* Team Controls */}
