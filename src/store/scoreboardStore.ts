@@ -31,6 +31,7 @@ interface ScoreboardStore extends ScoreboardState {
   // Game actions
   setPeriod: (period: number) => void;
   setGameTime: (time: number) => void;
+  setGameTimeMs: (ms) => set({ gameTimeMs: ms }),
   setShotClockTime: (time: number) => void;
   toggleGameClock: () => void;
   toggleShotClock: () => void;
