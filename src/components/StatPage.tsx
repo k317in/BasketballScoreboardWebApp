@@ -58,13 +58,13 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
         
         if (currentMs > 0) {
           // Decrease milliseconds
-          store.setGameTimeMs(Math.max(0, currentMs - 10));
+          scoreboardStore.setGameTimeMs(Math.max(0, currentMs - 10));
         } else {
           // Decrease seconds and reset milliseconds
           if (currentSeconds > 0) {
             const newTime = currentSeconds - 1;
-            store.setGameTime(newTime);
-            store.setGameTimeMs(990); // Reset to 990ms (99 centiseconds)
+            scoreboardStore.setGameTime(newTime);
+            scoreboardStore.setGameTimeMs(990); // Reset to 990ms for next second
           }
         }
         

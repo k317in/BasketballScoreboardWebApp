@@ -50,7 +50,7 @@ const Controller: React.FC<ControllerProps> = ({ onBack, onLogin }) => {
           if (currentSeconds > 0) {
             const newTime = currentSeconds - 1;
             store.setGameTime(newTime);
-            store.setGameTimeMs(990); // Reset to 990ms (99 centiseconds)
+            store.setGameTimeMs(990); // Reset to 990ms for next second
           }
         }
         
