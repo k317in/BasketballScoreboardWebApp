@@ -1,9 +1,9 @@
-export const formatTime = (seconds: number): string => {
-  // If 60 seconds or less, show seconds with milliseconds (simulated)
+export const formatTime = (seconds: number, milliseconds: number = 0): string => {
+  // If 60 seconds or less, show seconds with milliseconds
   if (seconds <= 60) {
-    // For the last minute, we'll show seconds with a simulated millisecond display
-    // Since we only have second precision, we'll show .0 for milliseconds
-    return `${seconds.toString().padStart(2, '0')}.0`;
+    // For the last minute, show seconds with milliseconds (00-99)
+    const ms = Math.floor(milliseconds / 10); // Convert to centiseconds (0-99)
+    return `${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
   }
   
   // Normal mm:ss format for times over 1 minute
