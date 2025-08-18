@@ -107,9 +107,15 @@ const Login: React.FC<LoginProps> = ({ onBack, setCurrentView }) => {
           </div>
 
           {/* Admin Access */}
-          <div className="mt-4 text-center">
+          <div className="mb-4 text-center">
             <button
-              onClick={() => setCurrentView && setCurrentView('admin-login')}
+              onClick={() => {
+                if (setCurrentView) {
+                  setCurrentView('admin-login');
+                } else {
+                  console.warn('setCurrentView not available');
+                }
+              }}
               className="text-gray-400 hover:text-gray-300 text-xs underline"
             >
               Admin Access

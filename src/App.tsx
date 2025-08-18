@@ -16,10 +16,11 @@ import { useScoreboardStore } from './store/scoreboardStore';
 import { useAuthStore } from './store/authStore';
 import { useGameStore } from './store/gameStore';
 
-type ViewType = 'display' | 'team-settings' | 'game-settings' | 'stats' | 'controller' | 'login' | 'thursday' | 'game-lobby';
+type ViewType = 'display' | 'team-settings' | 'game-settings' | 'stats' | 'controller' | 'login' | 'thursday' | 'game-lobby' | 'admin-login' | 'admin-panel';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('login');
+  const [isAdminMode, setIsAdminMode] = useState(false);
   const { isFullscreen } = useScoreboardStore();
   const { isAuthenticated, initializeAuth, loading: authLoading } = useAuthStore();
   const { currentGameId } = useGameStore();
@@ -55,6 +56,15 @@ function App() {
     setCurrentView('display');
   };
 
+  const handleAdminLogin = () => {
+    setIsAdminMode(true);
+    setCurrentView('admin-panel');
+  };
+
+  const handleBackToUserLogin = () => {
+    setIsAdminMode(false);
+    setCurrentView('login');
+  };
   // Show loading screen while auth is initializing
   if (authLoading) {
     return (
@@ -69,13 +79,17 @@ function App() {
 
   const renderCurrentView = () => {
     // Require authentication for all views except login
-    if (!isAuthenticated && currentView !== 'login') {
+    if (!isAuthenticated && currentView !== 'login' && currentView !== 'admin-login' && currentView !== 'admin-panel') {
       return <Login onBack={handleBackFromLogin} />;
     }
 
     switch (currentView) {
       case 'login':
         return <Login onBack={handleBackFromLogin} setCurrentView={setCurrentView} />;
+      case 'admin-login':
+        return <AdminLogin onAdminLogin={handleAdminLogin} onBack={handleBackToUserLogin} />;
+      case 'admin-panel':
+        return <AdminPanel onBack={handleBackToUserLogin} />;
       case 'game-lobby':
         return <GameLobby onJoinGame={handleJoinGame} />;
       case 'display':
@@ -122,7 +136,7 @@ function App() {
   return (
     <div className="min-h-screen bg-black text-white pb-20" style={{ fontFamily: 'Orbitron, monospace' }}>
       {renderCurrentView()}
-      {isAuthenticated && currentView !== 'login' && currentView !== 'game-lobby' && !isFullscreen && (
+      {isAuthenticated && currentView !== 'login' && currentView !== 'admin-login' && currentView !== 'admin-panel' && currentView !== 'game-lobby' && !isFullscreen && (
         <Navigation currentView={currentView} onViewChange={setCurrentView} />
       )}
     </div>
