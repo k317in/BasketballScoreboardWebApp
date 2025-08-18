@@ -2,25 +2,38 @@ import { useEffect, useRef, useCallback } from 'react';
 import { ref, onValue, set } from 'firebase/database';
 import { database } from '../config/firebase';
 import { useStatStore } from '../store/statStore';
+import { useGameStore } from '../store/gameStore';
 import { StatState } from '../types/stats';
 
-export const useStatSync = (roomId: string = 'default-room') => {
+export const useStatSync = () => {
   const store = useStatStore();
+  const { currentGameId } = useGameStore();
   const isUpdatingRef = useRef(false);
-  const dbRef = useRef(ref(database, `stats/${roomId}`));
+  const dbRef = useRef<any>(null);
   const unsubscribeRef = useRef<(() => void) | null>(null);
 
-  // Update database reference when room changes
+  // Update database reference when game changes
   useEffect(() => {
+    if (!currentGameId) {
+      // Clean up previous listener
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
+      }
+      return;
+    }
+
     // Clean up previous listener
     if (unsubscribeRef.current) {
       unsubscribeRef.current();
     }
 
-    dbRef.current = ref(database, `stats/${roomId}`);
-  }, [roomId]);
+    dbRef.current = ref(database, `stats/${currentGameId}`);
+  }, [currentGameId]);
 
   useEffect(() => {
+    if (!currentGameId || !dbRef.current) return;
+
     const statsRef = dbRef.current;
 
     // Listen for changes from Firebase
@@ -91,10 +104,10 @@ export const useStatSync = (roomId: string = 'default-room') => {
         unsubscribeRef.current();
       }
     };
-  }, [roomId, store]);
+  }, [currentGameId, store]);
 
   const emitUpdate = useCallback(async (state: StatState) => {
-    if (isUpdatingRef.current) return;
+    if (isUpdatingRef.current || !currentGameId || !dbRef.current) return;
 
     try {
       console.log('Emitting Stats update to Firebase:', state);

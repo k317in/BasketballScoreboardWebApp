@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useScoreboardStore } from '../store/scoreboardStore';
 import { useAuthStore } from '../store/authStore';
-import { useRoomStore } from '../store/roomStore';
+import { useGameStore } from '../store/gameStore';
 import { useFirebaseSync } from '../hooks/useFirebaseSync';
 import { ArrowLeft, Upload, Palette, Lock } from 'lucide-react';
 import RoleIndicator from './RoleIndicator';
@@ -14,8 +14,8 @@ interface TeamSettingsProps {
 const TeamSettings: React.FC<TeamSettingsProps> = ({ onBack, onLogin }) => {
   const store = useScoreboardStore();
   const { isTable } = useAuthStore();
-  const { currentRoom } = useRoomStore();
-  const { emitUpdate } = useFirebaseSync(currentRoom);
+  const { currentGameId } = useGameStore();
+  const { emitUpdate } = useFirebaseSync();
   const [activeTeam, setActiveTeam] = useState<1 | 2>(1);
 
   const teamColors = [

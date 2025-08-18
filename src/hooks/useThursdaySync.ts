@@ -3,26 +3,39 @@ import { ref, onValue, set, off } from 'firebase/database';
 import { database } from '../config/firebase';
 import { useThursdayStore } from '../store/thursdayStore';
 import { useAuthStore } from '../store/authStore';
+import { useGameStore } from '../store/gameStore';
 import { ThursdayModeState } from '../types/thursday';
 
-export const useThursdaySync = (roomId: string = 'default-room') => {
+export const useThursdaySync = () => {
   const store = useThursdayStore();
   const { isAuthenticated, isTable } = useAuthStore();
+  const { currentGameId } = useGameStore();
   const isUpdatingRef = useRef(false);
-  const dbRef = useRef(ref(database, `thursday/${roomId}`));
+  const dbRef = useRef<any>(null);
   const unsubscribeRef = useRef<(() => void) | null>(null);
 
-  // Update database reference when room changes
+  // Update database reference when game changes
   useEffect(() => {
+    if (!currentGameId) {
+      // Clean up previous listener
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
+      }
+      return;
+    }
+
     // Clean up previous listener
     if (unsubscribeRef.current) {
       unsubscribeRef.current();
     }
 
-    dbRef.current = ref(database, `thursday/${roomId}`);
-  }, [roomId]);
+    dbRef.current = ref(database, `thursday/${currentGameId}`);
+  }, [currentGameId]);
 
   useEffect(() => {
+    if (!currentGameId || !dbRef.current) return;
+
     const thursdayRef = dbRef.current;
 
     // Listen for changes from Firebase
@@ -84,10 +97,10 @@ export const useThursdaySync = (roomId: string = 'default-room') => {
         unsubscribeRef.current();
       }
     };
-  }, [roomId, store]);
+  }, [currentGameId, store]);
 
   const emitUpdate = useCallback(async (state: ThursdayModeState) => {
-    if (isUpdatingRef.current) return;
+    if (isUpdatingRef.current || !currentGameId || !dbRef.current) return;
 
     // Only allow updates if user is authenticated and has table permissions
     if (!isAuthenticated || !isTable) {

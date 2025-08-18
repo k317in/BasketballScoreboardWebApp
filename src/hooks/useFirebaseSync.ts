@@ -2,25 +2,38 @@ import { useEffect, useRef, useCallback } from 'react';
 import { ref, onValue, set, off } from 'firebase/database';
 import { database } from '../config/firebase';
 import { useScoreboardStore } from '../store/scoreboardStore';
+import { useGameStore } from '../store/gameStore';
 import { ScoreboardState } from '../types/scoreboard';
 
-export const useFirebaseSync = (roomId: string = 'default-room') => {
+export const useFirebaseSync = () => {
   const store = useScoreboardStore();
+  const { currentGameId } = useGameStore();
   const isUpdatingRef = useRef(false);
-  const dbRef = useRef(ref(database, `scoreboards/${roomId}`));
+  const dbRef = useRef<any>(null);
   const unsubscribeRef = useRef<(() => void) | null>(null);
 
-  // Update database reference when room changes
+  // Update database reference when game changes
   useEffect(() => {
+    if (!currentGameId) {
+      // Clean up previous listener
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
+      }
+      return;
+    }
+
     // Clean up previous listener
     if (unsubscribeRef.current) {
       unsubscribeRef.current();
     }
 
-    dbRef.current = ref(database, `scoreboards/${roomId}`);
-  }, [roomId]);
+    dbRef.current = ref(database, `scoreboards/${currentGameId}`);
+  }, [currentGameId]);
 
   useEffect(() => {
+    if (!currentGameId || !dbRef.current) return;
+
     const scoreboardRef = dbRef.current;
 
     // Listen for changes from Firebase
@@ -147,10 +160,10 @@ export const useFirebaseSync = (roomId: string = 'default-room') => {
         unsubscribeRef.current();
       }
     };
-  }, [roomId, store]);
+  }, [currentGameId, store]);
 
   const emitUpdate = useCallback(async (state: ScoreboardState) => {
-    if (isUpdatingRef.current) return;
+    if (isUpdatingRef.current || !currentGameId || !dbRef.current) return;
 
     try {
       console.log('Emitting update to Firebase:', state);

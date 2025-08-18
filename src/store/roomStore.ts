@@ -1,24 +1,24 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface RoomState {
-  currentRoom: string;
-  setRoom: (roomId: string) => void;
-  clearRoom: () => void;
+interface GameRoomState {
+  currentGameId: string | null;
+  setGameId: (gameId: string | null) => void;
+  clearGameId: () => void;
 }
 
-export const useRoomStore = create<RoomState>()(
+export const useRoomStore = create<GameRoomState>()(
   persist(
     (set) => ({
-      currentRoom: 'court-1', // Default to a specific room
-      setRoom: (roomId: string) => {
-        console.log('Setting room to:', roomId);
-        set({ currentRoom: roomId });
+      currentGameId: null,
+      setGameId: (gameId: string | null) => {
+        console.log('Setting game ID to:', gameId);
+        set({ currentGameId: gameId });
       },
-      clearRoom: () => set({ currentRoom: 'court-1' })
+      clearGameId: () => set({ currentGameId: null })
     }),
     {
-      name: 'basketball-room'
+      name: 'basketball-game-room'
     }
   )
 );

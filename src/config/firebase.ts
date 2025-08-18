@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getDatabase, connectDatabaseEmulator } from "firebase/database";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   // Replace these with your actual Firebase config
@@ -19,6 +20,9 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 // Initialize Realtime Database and get a reference to the service
 export const database = getDatabase(app);
+
+// Initialize Firebase Authentication
+export const auth = getAuth(app);
 
 // Initialize Analytics (only in production)
 let analytics;
