@@ -4,10 +4,10 @@ import { Users, Lock, Eye, UserPlus, Mail, User, Shield } from 'lucide-react';
 
 interface LoginProps {
   onBack: () => void;
-  setCurrentView?: (view: string) => void;
+  onAdminAccess?: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onBack, setCurrentView }) => {
+const Login: React.FC<LoginProps> = ({ onBack, onAdminAccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -110,10 +110,10 @@ const Login: React.FC<LoginProps> = ({ onBack, setCurrentView }) => {
           <div className="mb-4 text-center">
             <button
               onClick={() => {
-                if (setCurrentView) {
-                  setCurrentView('admin-login');
+                if (onAdminAccess) {
+                  onAdminAccess();
                 } else {
-                  console.warn('setCurrentView not available');
+                  console.warn('onAdminAccess not available');
                 }
               }}
               className="text-gray-400 hover:text-gray-300 text-xs underline"

@@ -48,6 +48,10 @@ function App() {
     setCurrentView('login');
   };
 
+  const handleAdminAccess = () => {
+    setCurrentView('admin-login');
+  };
+
   const handleBackFromLogin = () => {
     if (isAuthenticated) {
       setCurrentView('game-lobby');
@@ -87,7 +91,7 @@ function App() {
 
     switch (currentView) {
       case 'login':
-        return <Login onBack={handleBackFromLogin} setCurrentView={setCurrentView} />;
+        return <Login onBack={handleBackFromLogin} onAdminAccess={handleAdminAccess} />;
       case 'admin-login':
         return <AdminLogin onAdminLogin={handleAdminLogin} onBack={handleBackToUserLogin} />;
       case 'admin-panel':
@@ -131,7 +135,7 @@ function App() {
         }
         return <StatPage onBack={() => setCurrentView('display')} onLogin={handleLogin} />;
       default:
-        return <GameLobby onJoinGame={handleJoinGame} />;
+        return <Login onBack={handleBackFromLogin} onAdminAccess={handleAdminAccess} />;
     }
   };
 
