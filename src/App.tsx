@@ -12,6 +12,8 @@ import Navigation from './components/Navigation';
 import ThursdayMode from './components/ThursdayMode';
 import StatPage from './components/StatPage';
 import GameLobby from './components/GameLobby';
+import AdminLogin from './components/AdminLogin';
+import AdminPanel from './components/AdminPanel';
 import { useScoreboardStore } from './store/scoreboardStore';
 import { useAuthStore } from './store/authStore';
 import { useGameStore } from './store/gameStore';
