@@ -75,7 +75,7 @@ function App() {
 
     switch (currentView) {
       case 'login':
-        return <Login onBack={handleBackFromLogin} />;
+        return <Login onBack={handleBackFromLogin} setCurrentView={setCurrentView} />;
       case 'game-lobby':
         return <GameLobby onJoinGame={handleJoinGame} />;
       case 'display':

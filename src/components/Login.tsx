@@ -4,9 +4,10 @@ import { Users, Lock, Eye, UserPlus, Mail, User, Shield } from 'lucide-react';
 
 interface LoginProps {
   onBack: () => void;
+  setCurrentView?: (view: string) => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onBack }) => {
+const Login: React.FC<LoginProps> = ({ onBack, setCurrentView }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
