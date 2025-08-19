@@ -3,7 +3,7 @@ import { useStatStore } from '../store/statStore';
 import { useScoreboardStore } from '../store/scoreboardStore';
 import { useThursdayStore } from '../store/thursdayStore';
 import { useAuthStore } from '../store/authStore';
-import { useGameStore } from '../store/gameStore';
+import { useRoomStore } from '../store/roomStore';
 import { useFirebaseSync } from '../hooks/useFirebaseSync';
 import { useStatSync } from '../hooks/useStatSync';
 import { formatTime } from '../utils/timeFormat';
@@ -43,9 +43,9 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
   const scoreboardStore = useScoreboardStore();
   const thursdayStore = useThursdayStore();
   const { isTable } = useAuthStore();
-  const { currentGameId } = useGameStore();
-  const { emitUpdate: emitScoreboardUpdate } = useFirebaseSync();
-  const { emitUpdate: emitStatUpdate } = useStatSync();
+  const { currentRoom } = useRoomStore();
+  const { emitUpdate: emitScoreboardUpdate } = useFirebaseSync(currentRoom);
+  const { emitUpdate: emitStatUpdate } = useStatSync(currentRoom);
 
   // Game clock timer - runs locally for real-time updates
   useEffect(() => {

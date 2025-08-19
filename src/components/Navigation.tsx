@@ -1,19 +1,17 @@
 import React from 'react';
 import { useAuthStore } from '../store/authStore';
-import { useGameStore } from '../store/gameStore';
-import { Users, Settings, BarChart3, MonitorPlay, Gamepad2, Calendar, Home } from 'lucide-react';
+import { useThursdayStore } from '../store/thursdayStore';
+import { Users, Settings, BarChart3, MonitorPlay, Gamepad2, Calendar } from 'lucide-react';
 
 interface NavigationProps {
-  currentView: 'display' | 'team-settings' | 'game-settings' | 'stats' | 'controller' | 'login' | 'thursday' | 'game-lobby';
-  onViewChange: (view: 'display' | 'team-settings' | 'game-settings' | 'stats' | 'controller' | 'login' | 'thursday' | 'game-lobby') => void;
+  currentView: 'display' | 'team-settings' | 'game-settings' | 'stats' | 'controller' | 'login' | 'thursday';
+  onViewChange: (view: 'display' | 'team-settings' | 'game-settings' | 'stats' | 'controller' | 'login' | 'tuesday') => void;
 }
 
 const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange }) => {
   const { isTable } = useAuthStore();
-  const { currentGameId } = useGameStore();
 
   const navItems = [
-    { id: 'game-lobby', icon: Home, label: 'Lobby', requiresTable: false },
     { id: 'display', icon: MonitorPlay, label: 'Scoreboard', requiresTable: false },
     { id: 'controller', icon: Gamepad2, label: 'Controller', requiresTable: true },
     { id: 'team-settings', icon: Users, label: 'Teams', requiresTable: true },
@@ -34,7 +32,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange }) =>
         <div className="flex justify-center space-x-2 sm:space-x-4 md:space-x-8 overflow-x-auto">
           {navItems.map(({ id, icon: Icon, label, requiresTable }) => {
             const isVisible = !requiresTable || isTable;
-            const isDisabled = (requiresTable && !isTable) || (id !== 'game-lobby' && !currentGameId);
+            const isDisabled = requiresTable && !isTable;
             
             if (!isVisible) return null;
             
@@ -50,13 +48,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange }) =>
                     : 'text-gray-400 hover:text-white hover:bg-gray-800'
                 }`}
                 disabled={isDisabled}
-                title={
-                  requiresTable && !isTable 
-                    ? 'Requires Table access' 
-                    : id !== 'game-lobby' && !currentGameId 
-                    ? 'Select a game first' 
-                    : ''
-                }
+                title={requiresTable && !isTable ? 'Requires Table access' : ''}
               >
                 <Icon size={18} className="sm:w-5 sm:h-5" />
                 <span className="hidden sm:block text-xs sm:text-sm">{label}</span>

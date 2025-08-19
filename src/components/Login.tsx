@@ -1,82 +1,33 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
-import { Users, Lock, Eye, UserPlus, Mail, User, Shield } from 'lucide-react';
+import { Users, Lock, Eye } from 'lucide-react';
+import authConfig from '../config/auth.json';
 
 interface LoginProps {
   onBack: () => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onBack }) => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [isSignup, setIsSignup] = useState(false);
-  const [requestedRole, setRequestedRole] = useState<'guest' | 'table'>('guest');
-  const { login, signup, loading, error, clearError } = useAuthStore();
+  const [error, setError] = useState('');
+  const { login } = useAuthStore();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    clearError();
+    setError('');
 
-    try {
-      await login(email, password);
+    // Simple hardcoded credentials for MVP
+    if (username === authConfig.username && password === authConfig.password) {
+      login('table', 'Table');
       onBack();
-    } catch (error) {
-      // Error is handled by the store
-    }
-  };
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    clearError();
-
-    try {
-      await signup(email, password, name, requestedRole);
-      onBack();
-    } catch (error) {
-      // Error is handled by the store
+    } else {
+      setError('Invalid credentials. Please check your username and password.');
     }
   };
 
   const handleGuestAccess = () => {
-    // For now, redirect to signup as guest
-    setIsSignup(true);
-    setRequestedRole('guest');
-  };
-
-  const resetForm = () => {
-    setEmail('');
-    setPassword('');
-    setName('');
-    setRequestedRole('guest');
-    clearError();
-  };
-
-  const toggleMode = () => {
-    setIsSignup(!isSignup);
-    resetForm();
-  };
-
-  const handleSubmit = isSignup ? handleSignup : handleLogin;
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-gray-400">{isSignup ? 'Creating account...' : 'Signing in...'}</p>
-        </div>
-      </div>
-    );
-  }
-
-  const handleDemoAccess = () => {
-    // For demo purposes, create a guest account with demo credentials
-    setEmail('demo@example.com');
-    setPassword('demo123');
-    setName('Demo User');
-    setIsSignup(true);
-    setRequestedRole('guest');
+    // Guest access - no login required
     onBack();
   };
 
@@ -86,21 +37,19 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
         <div className="bg-gray-900 rounded-lg p-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold mb-2">Basketball Scoreboard</h1>
-            <p className="text-gray-400">
-              {isSignup ? 'Create your account' : 'Sign in to continue'}
-            </p>
+            <p className="text-gray-400">Choose your access level</p>
           </div>
 
-          {/* Quick Demo Access */}
+          {/* Guest Access */}
           <div className="mb-8">
             <button
-              onClick={handleDemoAccess}
+              onClick={handleGuestAccess}
               className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
             >
               <Eye size={24} />
               <div className="text-left">
-                <div className="font-semibold">Quick Demo Access</div>
-                <div className="text-sm text-blue-200">Try the app as a guest</div>
+                <div className="font-semibold">View as Guest</div>
+                <div className="text-sm text-blue-200">Display-only mode</div>
               </div>
             </button>
           </div>
@@ -114,20 +63,14 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
             </div>
           </div>
 
-          {/* Login/Signup Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Table Login */}
+          <form onSubmit={handleLogin} className="space-y-6">
             <div className="text-center mb-4">
-              {isSignup ? (
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <UserPlus size={20} />
-                  <span className="font-semibold">Create Account</span>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Lock size={20} />
-                  <span className="font-semibold">Sign In</span>
-                </div>
-              )}
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Users size={20} />
+                <span className="font-semibold">Table Control Access</span>
+              </div>
+              <p className="text-sm text-gray-400">Login to control the scoreboard</p>
             </div>
 
             {error && (
@@ -136,119 +79,39 @@ const Login: React.FC<LoginProps> = ({ onBack }) => {
               </div>
             )}
 
-            {isSignup && (
-              <div>
-                <label className="block text-sm font-medium mb-2">Full Name</label>
-                <div className="relative">
-                  <User size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter your full name"
-                    required
-                  />
-                </div>
-              </div>
-            )}
-
             <div>
-              <label className="block text-sm font-medium mb-2">Email Address</label>
-              <div className="relative">
-                <Mail size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
+              <label className="block text-sm font-medium mb-2">Username</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter username"
+                required
+              />
             </div>
 
             <div>
               <label className="block text-sm font-medium mb-2">Password</label>
-              <div className="relative">
-                <Lock size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter your password"
-                  required
-                  minLength={6}
-                />
-              </div>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter password"
+                required
+              />
             </div>
-
-            {isSignup && (
-              <div>
-                <label className="block text-sm font-medium mb-3">Account Type</label>
-                <div className="space-y-3">
-                  <label className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-750 transition-colors">
-                    <input
-                      type="radio"
-                      name="role"
-                      value="guest"
-                      checked={requestedRole === 'guest'}
-                      onChange={(e) => setRequestedRole(e.target.value as 'guest')}
-                      className="w-4 h-4 text-blue-600"
-                    />
-                    <div className="flex items-center gap-2">
-                      <Eye size={20} className="text-blue-400" />
-                      <div>
-                        <div className="font-medium">Guest Account</div>
-                        <div className="text-sm text-gray-400">View scoreboards only</div>
-                      </div>
-                    </div>
-                  </label>
-                  
-                  <label className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-750 transition-colors">
-                    <input
-                      type="radio"
-                      name="role"
-                      value="table"
-                      checked={requestedRole === 'table'}
-                      onChange={(e) => setRequestedRole(e.target.value as 'table')}
-                      className="w-4 h-4 text-blue-600"
-                    />
-                    <div className="flex items-center gap-2">
-                      <Shield size={20} className="text-yellow-400" />
-                      <div>
-                        <div className="font-medium">Table Access</div>
-                        <div className="text-sm text-gray-400">Create and control games (requires approval)</div>
-                      </div>
-                    </div>
-                  </label>
-                </div>
-              </div>
-            )}
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-lg transition-colors font-semibold"
+              className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg transition-colors font-semibold"
             >
-              {isSignup ? <UserPlus size={20} /> : <Lock size={20} />}
-              {isSignup ? 'Create Account' : 'Sign In'}
+              <Lock size={20} />
+              Login as Table
             </button>
           </form>
 
-          {/* Toggle between login and signup */}
-          <div className="mt-6 text-center">
-            <button
-              onClick={toggleMode}
-              className="text-blue-400 hover:text-blue-300 text-sm underline"
-            >
-              {isSignup 
-                ? 'Already have an account? Sign in' 
-                : "Don't have an account? Sign up"
-              }
-            </button>
-          </div>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useScoreboardStore } from '../store/scoreboardStore';
 import { useAuthStore } from '../store/authStore';
-import { useGameStore } from '../store/gameStore';
+import { useRoomStore } from '../store/roomStore';
 import { useFirebaseSync } from '../hooks/useFirebaseSync';
 import { ArrowLeft, Clock, Target, Hash, RotateCcw, Lock } from 'lucide-react';
 import RoleIndicator from './RoleIndicator';
@@ -14,8 +14,8 @@ interface GameSettingsProps {
 const GameSettings: React.FC<GameSettingsProps> = ({ onBack, onLogin }) => {
   const store = useScoreboardStore();
   const { isTable } = useAuthStore();
-  const { currentGameId } = useGameStore();
-  const { emitUpdate } = useFirebaseSync();
+  const { currentRoom } = useRoomStore();
+  const { emitUpdate } = useFirebaseSync(currentRoom);
   const { gameSettings } = store;
 
   const handleSettingChange = (key: keyof typeof gameSettings, value: number) => {

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useScoreboardStore } from '../store/scoreboardStore';
 import { useAuthStore } from '../store/authStore';
-import { useGameStore } from '../store/gameStore';
+import { useRoomStore } from '../store/roomStore';
 import { useThursdayStore } from '../store/thursdayStore';
 import { useFirebaseSync } from '../hooks/useFirebaseSync';
 import { useThursdaySync } from '../hooks/useThursdaySync';
@@ -17,9 +17,9 @@ const ScoreboardDisplay: React.FC<ScoreboardDisplayProps> = ({ onLogin }) => {
   const store = useScoreboardStore();
   const thursdayStore = useThursdayStore();
   const { isTable } = useAuthStore();
-  const { currentGameId } = useGameStore();
-  const { emitUpdate } = useFirebaseSync();
-  const { emitUpdate: emitThursdayUpdate } = useThursdaySync();
+  const { currentRoom, setRoom } = useRoomStore();
+  const { emitUpdate } = useFirebaseSync(currentRoom);
+  const { emitUpdate: emitThursdayUpdate } = useThursdaySync(currentRoom);
 
   // Get team names from Thursday Mode if enabled
   const getDisplayTeamName = (teamNumber: 1 | 2) => {

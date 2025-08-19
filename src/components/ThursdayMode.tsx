@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useThursdayStore } from '../store/thursdayStore';
 import { useAuthStore } from '../store/authStore';
-import { useGameStore } from '../store/gameStore';
+import { useRoomStore } from '../store/roomStore';
 import { useThursdaySync } from '../hooks/useThursdaySync';
 import { googleSheetsService } from '../services/googleSheets';
 import {
@@ -30,8 +30,8 @@ interface ThursdayModeProps {
 const ThursdayMode: React.FC<ThursdayModeProps> = ({ onBack, onLogin }) => {
   const store = useThursdayStore();
   const { isTable } = useAuthStore();
-  const { currentGameId } = useGameStore();
-  const { emitUpdate } = useThursdaySync();
+  const { currentRoom } = useRoomStore();
+  const { emitUpdate } = useThursdaySync(currentRoom);
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
