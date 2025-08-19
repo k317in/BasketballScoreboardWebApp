@@ -4,10 +4,9 @@ import { Users, Lock, Eye, UserPlus, Mail, User, Shield } from 'lucide-react';
 
 interface LoginProps {
   onBack: () => void;
-  onAdminAccess?: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onBack, onAdminAccess }) => {
+const Login: React.FC<LoginProps> = ({ onBack }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -106,21 +105,6 @@ const Login: React.FC<LoginProps> = ({ onBack, onAdminAccess }) => {
             </button>
           </div>
 
-          {/* Admin Access */}
-          <div className="mb-4 text-center">
-            <button
-              onClick={() => {
-                if (onAdminAccess) {
-                  onAdminAccess();
-                } else {
-                  console.warn('onAdminAccess not available');
-                }
-              }}
-              className="text-gray-400 hover:text-gray-300 text-xs underline"
-            >
-              Admin Access
-            </button>
-          </div>
           <div className="relative mb-8">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-600"></div>
