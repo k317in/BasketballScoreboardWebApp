@@ -50,6 +50,3 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
   // Game clock timer - runs locally for real-time updates
   useEffect(() => {
     let interval: NodeJS.Timeout;
-  }
-  )
-}
