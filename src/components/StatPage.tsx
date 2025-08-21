@@ -83,13 +83,12 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
   };
 
   const exportToCSV = () => {
-    const stats = statStore.getPlayerStats();
+    const stats = statStore.getAllPlayerStats();
     const csvContent = [
       ['Player', 'PTS', 'REB', 'AST', 'STL', 'BLK', 'TO', 'SA', 'PF', 'Shot%', 'EFF'].join(','),
-      ...Object.entries(stats).map(([playerId, playerStats]) => {
-        const summary = statStore.calculatePlayerSummary(playerId);
+      ...stats.map((summary) => {
         return [
-          playerId,
+          summary.playerId,
           summary.points,
           summary.rebounds,
           summary.assists,
@@ -143,11 +142,11 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
     );
   }
 
-  const players = Object.keys(statStore.getPlayerStats());
+  const players = statStore.getAllPlayerStats().map(summary => summary.playerId);
 
   if (showPlayerStats && selectedPlayer) {
     const playerStats = statStore.getPlayerStats()[selectedPlayer];
-    const summary = statStore.calculatePlayerSummary(selectedPlayer);
+    const summary = statStore.getPlayerStats()[selectedPlayer];
 
     return (
       <div className="min-h-screen bg-gray-100 p-4">
@@ -472,7 +471,7 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
             ) : (
               <div className="grid gap-4">
                 {players.map((playerId) => {
-                  const summary = statStore.calculatePlayerSummary(playerId);
+                  const summary = statStore.getPlayerStats()[playerId];
                   return (
                     <div
                       key={playerId}
