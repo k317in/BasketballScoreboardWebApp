@@ -300,6 +300,8 @@ export const useStatStore = create<StatStore>()(
           steals: 0,
           blocks: 0,
           turnovers: 0,
+          freeThrows: 0,
+          threePointers: 0,
           totalStats: 0
         };
 
@@ -323,9 +325,27 @@ export const useStatStore = create<StatStore>()(
             case 'turnovers':
               teamStats.turnovers += event.value;
               break;
+            case 'free_throws':
+              teamStats.freeThrows += event.value;
+              break;
+            case 'three_pointers':
+              teamStats.threePointers += event.value;
+              break;
+            case 'shot_attempted':
+              teamStats.shotAttempted += event.value;
+              break;
+            case 'personal_fouls':
+              teamStats.personalFouls += event.value;
+              break;
           }
           teamStats.totalStats += event.value;
         });
+
+        // Calculate team shot percentage and efficiency
+        const shotsMade = Math.floor(teamStats.points / 1);
+        teamStats.shotPercentage = teamStats.shotAttempted > 0 ? (shotsMade / teamStats.shotAttempted) * 100 : 0;
+        const missedShots = teamStats.shotAttempted - shotsMade;
+        teamStats.efficiency = teamStats.points + teamStats.rebounds + teamStats.assists + teamStats.steals + teamStats.blocks - missedShots - teamStats.turnovers;
 
         return teamStats;
       },
