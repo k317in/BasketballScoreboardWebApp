@@ -13,10 +13,6 @@ export type StatType =
   | 'steals' 
   | 'blocks' 
   | 'turnovers' 
-  | 'free_throws' 
-  | 'three_pointers';
-  | 'shot_attempted'
-  | 'personal_fouls';
 
 export interface StatEvent {
   id: string;
@@ -67,13 +63,7 @@ export interface PlayerStatSummary {
   steals: number;
   blocks: number;
   turnovers: number;
-  freeThrows: number;
-  threePointers: number;
-  shotAttempted: number;
-  personalFouls: number;
   totalStats: number;
-  shotPercentage: number; // calculated field
-  efficiency: number; // calculated field
 }
 
 export interface GameExportData {

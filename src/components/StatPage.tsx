@@ -298,41 +298,27 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
             {/* Undo Buttons */}
             <div className="mt-6 space-y-4">
               <h3 className="text-lg font-semibold text-gray-800">Undo Last Action</h3>
-              <div className="grid grid-cols-5 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <button
-                  onClick={() => handleStatUpdate(selectedPlayer, 'free_throw', -1)}
+                  onClick={() => handleStatUpdate(selectedPlayer, 'points', -1)}
                   className="bg-red-100 text-red-700 py-2 px-4 rounded-lg hover:bg-red-200 transition-colors flex items-center justify-center space-x-2"
                 >
                   <Minus className="w-4 h-4" />
                   <span>-1</span>
                 </button>
                 <button
-                  onClick={() => handleStatUpdate(selectedPlayer, 'field_goal', -1)}
+                  onClick={() => handleStatUpdate(selectedPlayer, 'points', -2)}
                   className="bg-red-100 text-red-700 py-2 px-4 rounded-lg hover:bg-red-200 transition-colors flex items-center justify-center space-x-2"
                 >
                   <Minus className="w-4 h-4" />
                   <span>-2</span>
                 </button>
                 <button
-                  onClick={() => handleStatUpdate(selectedPlayer, 'three_pointer', -1)}
+                  onClick={() => handleStatUpdate(selectedPlayer, 'points', -3)}
                   className="bg-red-100 text-red-700 py-2 px-4 rounded-lg hover:bg-red-200 transition-colors flex items-center justify-center space-x-2"
                 >
                   <Minus className="w-4 h-4" />
                   <span>-3</span>
-                </button>
-                <button
-                  onClick={() => handleStatUpdate(selectedPlayer, 'shot_attempted', -1)}
-                  className="bg-red-100 text-red-700 py-2 px-4 rounded-lg hover:bg-red-200 transition-colors flex items-center justify-center space-x-2"
-                >
-                  <Minus className="w-4 h-4" />
-                  <span>-SA</span>
-                </button>
-                <button
-                  onClick={() => handleStatUpdate(selectedPlayer, 'personal_fouls', -1)}
-                  className="bg-red-100 text-red-700 py-2 px-4 rounded-lg hover:bg-red-200 transition-colors flex items-center justify-center space-x-2"
-                >
-                  <Minus className="w-4 h-4" />
-                  <span>-PF</span>
                 </button>
               </div>
               <div className="grid grid-cols-5 gap-3">
