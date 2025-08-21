@@ -317,8 +317,8 @@ export const useStatStore = create<StatStore>()(
             case 'three_pointers':
               teamStats.threePointers += event.value;
               break;
-            case 'misses':
-              teamStats.misses += event.value;
+            case 'shot_attempted':
+              teamStats.shotAttempted += event.value;
               break;
             case 'personal_fouls':
               teamStats.personalFouls += event.value;
@@ -326,6 +326,12 @@ export const useStatStore = create<StatStore>()(
           }
           teamStats.totalStats += event.value;
         });
+
+        // Calculate team shot percentage and efficiency
+        const shotsMade = Math.floor(teamStats.points / 1);
+        teamStats.shotPercentage = teamStats.shotAttempted > 0 ? (shotsMade / teamStats.shotAttempted) * 100 : 0;
+        const missedShots = teamStats.shotAttempted - shotsMade;
+        teamStats.efficiency = teamStats.points + teamStats.rebounds + teamStats.assists + teamStats.steals + teamStats.blocks - missedShots - teamStats.turnovers;
 
         return teamStats;
       },

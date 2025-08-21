@@ -15,7 +15,7 @@ export type StatType =
   | 'turnovers' 
   | 'free_throws' 
   | 'three_pointers';
-  | 'misses'
+  | 'shot_attempted'
   | 'personal_fouls';
 
 export interface StatEvent {
@@ -69,9 +69,11 @@ export interface PlayerStatSummary {
   turnovers: number;
   freeThrows: number;
   threePointers: number;
-  misses: number;
+  shotAttempted: number;
   personalFouls: number;
   totalStats: number;
+  shotPercentage: number; // calculated field
+  efficiency: number; // calculated field
 }
 
 export interface GameExportData {
