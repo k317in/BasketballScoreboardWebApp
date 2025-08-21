@@ -317,6 +317,12 @@ export const useStatStore = create<StatStore>()(
             case 'three_pointers':
               teamStats.threePointers += event.value;
               break;
+            case 'misses':
+              teamStats.misses += event.value;
+              break;
+            case 'personal_fouls':
+              teamStats.personalFouls += event.value;
+              break;
           }
           teamStats.totalStats += event.value;
         });

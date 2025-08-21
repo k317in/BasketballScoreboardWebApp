@@ -403,14 +403,18 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
   };
 
   const statButtons = [
-    { type: 'points' as StatType, label: '+1', value: 1, icon: Target, color: 'bg-green-600 hover:bg-green-700' },
-    { type: 'points' as StatType, label: '+2', value: 2, icon: Target, color: 'bg-green-600 hover:bg-green-700' },
-    { type: 'points' as StatType, label: '+3', value: 3, icon: Target, color: 'bg-green-600 hover:bg-green-700' },
-    { type: 'rebounds' as StatType, label: 'REB', value: 1, icon: TrendingUp, color: 'bg-blue-600 hover:bg-blue-700' },
-    { type: 'assists' as StatType, label: 'AST', value: 1, icon: Users, color: 'bg-purple-600 hover:bg-purple-700' },
-    { type: 'steals' as StatType, label: 'STL', value: 1, icon: Zap, color: 'bg-yellow-600 hover:bg-yellow-700' },
-    { type: 'blocks' as StatType, label: 'BLK', value: 1, icon: Shield, color: 'bg-red-600 hover:bg-red-700' },
-    { type: 'turnovers' as StatType, label: 'TO', value: 1, icon: RotateCw, color: 'bg-orange-600 hover:bg-orange-700' }
+    // Row 1: Scoring stats
+    { type: 'points' as StatType, label: '+1', value: 1, icon: Target, color: 'bg-green-600 hover:bg-green-700', row: 1 },
+    { type: 'points' as StatType, label: '+2', value: 2, icon: Target, color: 'bg-green-600 hover:bg-green-700', row: 1 },
+    { type: 'points' as StatType, label: '+3', value: 3, icon: Target, color: 'bg-green-600 hover:bg-green-700', row: 1 },
+    { type: 'misses' as StatType, label: 'Miss', value: 1, icon: X, color: 'bg-gray-600 hover:bg-gray-700', row: 1 },
+    { type: 'personal_fouls' as StatType, label: 'PF', value: 1, icon: AlertTriangle, color: 'bg-yellow-600 hover:bg-yellow-700', row: 1 },
+    // Row 2: Other stats
+    { type: 'rebounds' as StatType, label: 'REB', value: 1, icon: TrendingUp, color: 'bg-blue-600 hover:bg-blue-700', row: 2 },
+    { type: 'assists' as StatType, label: 'AST', value: 1, icon: Users, color: 'bg-purple-600 hover:bg-purple-700', row: 2 },
+    { type: 'steals' as StatType, label: 'STL', value: 1, icon: Zap, color: 'bg-cyan-600 hover:bg-cyan-700', row: 2 },
+    { type: 'blocks' as StatType, label: 'BLK', value: 1, icon: Shield, color: 'bg-red-600 hover:bg-red-700', row: 2 },
+    { type: 'turnovers' as StatType, label: 'TO', value: 1, icon: RotateCw, color: 'bg-orange-600 hover:bg-orange-700', row: 2 }
   ];
 
   if (!isTable) {
