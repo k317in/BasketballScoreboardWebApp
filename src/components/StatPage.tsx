@@ -146,7 +146,7 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
 
   if (showPlayerStats && selectedPlayer) {
     const playerStats = statStore.getPlayerStats()[selectedPlayer];
-    const summary = statStore.getPlayerStats()[selectedPlayer];
+    const summary = statStore.getPlayerStats(selectedPlayer);
 
     return (
       <div className="min-h-screen bg-gray-100 p-4">
@@ -471,7 +471,7 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
             ) : (
               <div className="grid gap-4">
                 {players.map((playerId) => {
-                  const summary = statStore.getPlayerStats()[playerId];
+                  const summary = statStore.getPlayerStats(playerId);
                   return (
                     <div
                       key={playerId}
