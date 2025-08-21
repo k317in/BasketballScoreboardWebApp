@@ -69,6 +69,8 @@ export interface PlayerStatSummary {
   turnovers: number;
   freeThrows: number;
   threePointers: number;
+  shotAttempted: number;
+  personalFouls: number;
   totalStats: number;
   shotPercentage: number; // calculated field
   efficiency: number; // calculated field
