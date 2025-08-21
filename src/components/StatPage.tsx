@@ -168,7 +168,7 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
 
             {/* Player Summary */}
             <div className="bg-blue-50 rounded-lg p-4 mb-6">
-              <div className="grid grid-cols-4 gap-4 text-center">
+              <div className="grid grid-cols-6 gap-4 text-center">
                 <div>
                   <div className="text-2xl font-bold text-blue-600">{summary.points}</div>
                   <div className="text-sm text-gray-600">PTS</div>
@@ -192,24 +192,6 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
                 <div>
                   <div className="text-2xl font-bold text-blue-600">{summary.turnovers}</div>
                   <div className="text-sm text-gray-600">TO</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-blue-600">{summary.shotAttempted}</div>
-                  <div className="text-sm text-gray-600">SA</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-blue-600">{summary.personalFouls}</div>
-                  <div className="text-sm text-gray-600">PF</div>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4 text-center mt-4 pt-4 border-t border-blue-200">
-                <div>
-                  <div className="text-xl font-bold text-blue-600">{summary.shotPercentage.toFixed(1)}%</div>
-                  <div className="text-sm text-gray-600">Shot%</div>
-                </div>
-                <div>
-                  <div className="text-xl font-bold text-blue-600">{summary.efficiency}</div>
-                  <div className="text-sm text-gray-600">EFF</div>
                 </div>
               </div>
             </div>
@@ -482,7 +464,10 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
                         <div>
                           <h3 className="text-lg font-semibold text-gray-800">{playerId}</h3>
                           <div className="text-sm text-gray-600">
-                            PTS {summary.points} | REB {summary.rebounds} | AST {summary.assists} | STL {summary.steals} | BLK {summary.blocks} | TO {summary.turnovers}
+                            PTS {summary.points} | REB {summary.rebounds} | AST {summary.assists} | STL {summary.steals} | BLK {summary.blocks} | TO {summary.turnovers} | SA {summary.shotAttempted} | PF {summary.personalFouls}
+                          </div>
+                          <div className="text-sm text-blue-600 mt-1">
+                            Shot% {summary.shotPercentage.toFixed(1)}% | EFF {summary.efficiency}
                           </div>
                         </div>
                         <div className="text-right">
