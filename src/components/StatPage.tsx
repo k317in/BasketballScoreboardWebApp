@@ -403,16 +403,14 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
   };
 
   const statButtons = [
-    // Row 1: Scoring stats
     { type: 'points' as StatType, label: '+1', value: 1, icon: Target, color: 'bg-green-600 hover:bg-green-700', row: 1 },
     { type: 'points' as StatType, label: '+2', value: 2, icon: Target, color: 'bg-green-600 hover:bg-green-700', row: 1 },
     { type: 'points' as StatType, label: '+3', value: 3, icon: Target, color: 'bg-green-600 hover:bg-green-700', row: 1 },
-    { type: 'misses' as StatType, label: 'Miss', value: 1, icon: X, color: 'bg-gray-600 hover:bg-gray-700', row: 1 },
-    { type: 'personal_fouls' as StatType, label: 'PF', value: 1, icon: AlertTriangle, color: 'bg-yellow-600 hover:bg-yellow-700', row: 1 },
-    // Row 2: Other stats
+    { type: 'misses' as StatType, label: 'Miss', value: 1, icon: Target, color: 'bg-gray-600 hover:bg-gray-700', row: 1 },
+    { type: 'personalFouls' as StatType, label: 'PF', value: 1, icon: Shield, color: 'bg-red-600 hover:bg-red-700', row: 1 },
     { type: 'rebounds' as StatType, label: 'REB', value: 1, icon: TrendingUp, color: 'bg-blue-600 hover:bg-blue-700', row: 2 },
     { type: 'assists' as StatType, label: 'AST', value: 1, icon: Users, color: 'bg-purple-600 hover:bg-purple-700', row: 2 },
-    { type: 'steals' as StatType, label: 'STL', value: 1, icon: Zap, color: 'bg-cyan-600 hover:bg-cyan-700', row: 2 },
+    { type: 'steals' as StatType, label: 'STL', value: 1, icon: Zap, color: 'bg-yellow-600 hover:bg-yellow-700', row: 2 },
     { type: 'blocks' as StatType, label: 'BLK', value: 1, icon: Shield, color: 'bg-red-600 hover:bg-red-700', row: 2 },
     { type: 'turnovers' as StatType, label: 'TO', value: 1, icon: RotateCw, color: 'bg-orange-600 hover:bg-orange-700', row: 2 }
   ];
@@ -730,29 +728,45 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
                     
                     {/* Player Stats Summary */}
                     <div className="text-xs text-gray-400 mb-2">
-                      PTS: {playerStats.points} | REB: {playerStats.rebounds} | AST: {playerStats.assists} | STL: {playerStats.steals} | TO: {playerStats.turnovers}
+                      PTS: {playerStats.points} | REB: {playerStats.rebounds} | AST: {playerStats.assists} | STL: {playerStats.steals} | PF: {playerStats.personalFouls} | Miss: {playerStats.misses}
                     </div>
 
                     {/* Stat Buttons */}
-                    <div className="grid grid-cols-4 gap-1">
-                      {statButtons.map((stat) => (
-                        <button
-                          key={`${stat.type}-${stat.value}`}
-                          onClick={() => handleRecordStat(player.id, stat.type, stat.value)}
-                          className={`flex items-center justify-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-colors ${stat.color}`}
-                          title={
-                            !statStore.isLinkedMode && stat.type === 'points' 
-                              ? 'Points recorded in stats only (Standalone mode)' 
-                              : ''
-                          }
-                        >
-                          <stat.icon size={12} />
-                          {stat.label}
-                          {!statStore.isLinkedMode && stat.type === 'points' && (
-                            <span className="text-xs opacity-60">*</span>
-                          )}
-                        </button>
-                      ))}
+                    <div className="space-y-1">
+                      {/* Row 1: Scoring Stats */}
+                      <div className="grid grid-cols-5 gap-1">
+                        {statButtons.filter(stat => stat.row === 1).map((stat) => (
+                          <button
+                            key={`${stat.type}-${stat.value}`}
+                            onClick={() => handleRecordStat(player.id, stat.type, stat.value)}
+                            className={`flex items-center justify-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-colors ${stat.color}`}
+                            title={
+                              !statStore.isLinkedMode && stat.type === 'points' 
+                                ? 'Points recorded in stats only (Standalone mode)' 
+                                : ''
+                            }
+                          >
+                            <stat.icon size={12} />
+                            {stat.label}
+                            {!statStore.isLinkedMode && stat.type === 'points' && (
+                              <span className="text-xs opacity-60">*</span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                      {/* Row 2: Other Stats */}
+                      <div className="grid grid-cols-5 gap-1">
+                        {statButtons.filter(stat => stat.row === 2).map((stat) => (
+                          <button
+                            key={`${stat.type}-${stat.value}`}
+                            onClick={() => handleRecordStat(player.id, stat.type, stat.value)}
+                            className={`flex items-center justify-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-colors ${stat.color}`}
+                          >
+                            <stat.icon size={12} />
+                            {stat.label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 );
@@ -846,29 +860,45 @@ const StatPage: React.FC<StatPageProps> = ({ onBack, onLogin }) => {
                     
                     {/* Player Stats Summary */}
                     <div className="text-xs text-gray-400 mb-2">
-                      PTS: {playerStats.points} | REB: {playerStats.rebounds} | AST: {playerStats.assists} | STL: {playerStats.steals} | TO: {playerStats.turnovers}
+                      PTS: {playerStats.points} | REB: {playerStats.rebounds} | AST: {playerStats.assists} | STL: {playerStats.steals} | PF: {playerStats.personalFouls} | Miss: {playerStats.misses}
                     </div>
 
                     {/* Stat Buttons */}
-                    <div className="grid grid-cols-4 gap-1">
-                      {statButtons.map((stat) => (
-                        <button
-                          key={`${stat.type}-${stat.value}`}
-                          onClick={() => handleRecordStat(player.id, stat.type, stat.value)}
-                          className={`flex items-center justify-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-colors ${stat.color}`}
-                          title={
-                            !statStore.isLinkedMode && stat.type === 'points' 
-                              ? 'Points recorded in stats only (Standalone mode)' 
-                              : ''
-                          }
-                        >
-                          <stat.icon size={12} />
-                          {stat.label}
-                          {!statStore.isLinkedMode && stat.type === 'points' && (
-                            <span className="text-xs opacity-60">*</span>
-                          )}
-                        </button>
-                      ))}
+                    <div className="space-y-1">
+                      {/* Row 1: Scoring Stats */}
+                      <div className="grid grid-cols-5 gap-1">
+                        {statButtons.filter(stat => stat.row === 1).map((stat) => (
+                          <button
+                            key={`${stat.type}-${stat.value}`}
+                            onClick={() => handleRecordStat(player.id, stat.type, stat.value)}
+                            className={`flex items-center justify-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-colors ${stat.color}`}
+                            title={
+                              !statStore.isLinkedMode && stat.type === 'points' 
+                                ? 'Points recorded in stats only (Standalone mode)' 
+                                : ''
+                            }
+                          >
+                            <stat.icon size={12} />
+                            {stat.label}
+                            {!statStore.isLinkedMode && stat.type === 'points' && (
+                              <span className="text-xs opacity-60">*</span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                      {/* Row 2: Other Stats */}
+                      <div className="grid grid-cols-5 gap-1">
+                        {statButtons.filter(stat => stat.row === 2).map((stat) => (
+                          <button
+                            key={`${stat.type}-${stat.value}`}
+                            onClick={() => handleRecordStat(player.id, stat.type, stat.value)}
+                            className={`flex items-center justify-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-colors ${stat.color}`}
+                          >
+                            <stat.icon size={12} />
+                            {stat.label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 );
