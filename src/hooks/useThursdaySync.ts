@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { ref, onValue, set, off } from 'firebase/database';
+import { ref, onValue, set, DatabaseReference, DataSnapshot } from 'firebase/database';
 import { database } from '../config/firebase';
 import { useThursdayStore } from '../store/thursdayStore';
 import { useAuthStore } from '../store/authStore';
@@ -9,7 +9,7 @@ export const useThursdaySync = (roomId: string = 'default-room') => {
   const store = useThursdayStore();
   const { isAuthenticated, isTable } = useAuthStore();
   const isUpdatingRef = useRef(false);
-  const dbRef = useRef(ref(database, `thursday/${roomId}`));
+  const dbRef = useRef<ReturnType<typeof ref> | null>(null);
   const unsubscribeRef = useRef<(() => void) | null>(null);
 
   // Update database reference when room changes
@@ -19,14 +19,26 @@ export const useThursdaySync = (roomId: string = 'default-room') => {
       unsubscribeRef.current();
     }
 
-    dbRef.current = ref(database, `thursday/${roomId}`);
+    // Only set up Firebase if database is available
+    if (database) {
+      dbRef.current = ref(database, `thursday/${roomId}`);
+    } else {
+      console.warn('Firebase database not available - running in local-only mode');
+      dbRef.current = null;
+    }
   }, [roomId]);
 
   useEffect(() => {
+    // Skip Firebase setup if database is not available
+    if (!database || !dbRef.current) {
+      console.warn('Firebase sync disabled - running in local-only mode');
+      return;
+    }
+
     const thursdayRef = dbRef.current;
 
     // Listen for changes from Firebase
-    const handleDataChange = (snapshot: any) => {
+    const handleDataChange = (snapshot: DataSnapshot) => {
       if (isUpdatingRef.current) return;
       
       const data = snapshot.val();
@@ -92,6 +104,12 @@ export const useThursdaySync = (roomId: string = 'default-room') => {
     // Only allow updates if user is authenticated and has table permissions
     if (!isAuthenticated || !isTable) {
       console.warn('Cannot update Thursday Firebase: User not authenticated or lacks table permissions');
+      return;
+    }
+
+    // Skip Firebase update if database is not available
+    if (!database || !dbRef.current) {
+      console.warn('Firebase update skipped - running in local-only mode');
       return;
     }
 

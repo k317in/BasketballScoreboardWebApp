@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { ref, onValue, set } from 'firebase/database';
+import { ref, onValue, set, DatabaseReference, DataSnapshot } from 'firebase/database';
 import { database } from '../config/firebase';
 import { useStatStore } from '../store/statStore';
 import { StatState } from '../types/stats';
@@ -7,7 +7,7 @@ import { StatState } from '../types/stats';
 export const useStatSync = (roomId: string = 'default-room') => {
   const store = useStatStore();
   const isUpdatingRef = useRef(false);
-  const dbRef = useRef(ref(database, `stats/${roomId}`));
+  const dbRef = useRef<ReturnType<typeof ref> | null>(null);
   const unsubscribeRef = useRef<(() => void) | null>(null);
 
   // Update database reference when room changes
@@ -17,14 +17,26 @@ export const useStatSync = (roomId: string = 'default-room') => {
       unsubscribeRef.current();
     }
 
-    dbRef.current = ref(database, `stats/${roomId}`);
+    // Only set up Firebase if database is available
+    if (database) {
+      dbRef.current = ref(database, `stats/${roomId}`);
+    } else {
+      console.warn('Firebase database not available - running in local-only mode');
+      dbRef.current = null;
+    }
   }, [roomId]);
 
   useEffect(() => {
+    // Skip Firebase setup if database is not available
+    if (!database || !dbRef.current) {
+      console.warn('Firebase sync disabled - running in local-only mode');
+      return;
+    }
+
     const statsRef = dbRef.current;
 
     // Listen for changes from Firebase
-    const handleDataChange = (snapshot: any) => {
+    const handleDataChange = (snapshot: DataSnapshot) => {
       if (isUpdatingRef.current) return;
       
       const data = snapshot.val();
@@ -95,6 +107,12 @@ export const useStatSync = (roomId: string = 'default-room') => {
 
   const emitUpdate = useCallback(async (state: StatState) => {
     if (isUpdatingRef.current) return;
+
+    // Skip Firebase update if database is not available
+    if (!database || !dbRef.current) {
+      console.warn('Firebase update skipped - running in local-only mode');
+      return;
+    }
 
     try {
       console.log('Emitting Stats update to Firebase:', state);

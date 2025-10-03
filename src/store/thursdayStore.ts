@@ -81,7 +81,7 @@ export const useThursdayStore = create<ThursdayStore>()(
         }
       },
 
-      updateGameResult: (gameIndex, result) => {
+      updateGameResult: (gameIndex: number, result: string) => {
         const { schedule } = get();
         const updatedSchedule = [...schedule];
         if (updatedSchedule[gameIndex]) {
@@ -94,18 +94,6 @@ export const useThursdayStore = create<ThursdayStore>()(
       },
 
       updateLastUpdated: () => set({ lastUpdated: Date.now() }),
-
-      updateGameResult: (gameIndex, result) => {
-        const { schedule } = get();
-        const updatedSchedule = [...schedule];
-        if (updatedSchedule[gameIndex]) {
-          updatedSchedule[gameIndex] = { ...updatedSchedule[gameIndex], result };
-          set({ 
-            schedule: updatedSchedule,
-            lastUpdated: Date.now()
-          });
-        }
-      },
 
       // Getters
       getCurrentGame: () => {

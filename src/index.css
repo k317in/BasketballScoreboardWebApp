@@ -1,10 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import url('@fontsource/orbitron/400.css');
 @import url('@fontsource/orbitron/700.css');
 @import url('@fontsource/orbitron/900.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Custom styles for the scoreboard */
 body {

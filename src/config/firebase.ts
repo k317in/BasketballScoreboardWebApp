@@ -1,30 +1,47 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getDatabase, connectDatabaseEmulator } from "firebase/database";
+import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
+import { Analytics, getAnalytics } from "firebase/analytics";
+import { Database, getDatabase } from "firebase/database";
 
-const firebaseConfig = {
-  // Replace these with your actual Firebase config
-  apiKey: "AIzaSyDuy3N3TU4-Ubhe4RvqS36yWj6ohI9hEj4",
-  authDomain: "scoreboard-app-fd8b4.firebaseapp.com",
-  databaseURL: "https://scoreboard-app-fd8b4-default-rtdb.firebaseio.com",
-  projectId: "scoreboard-app-fd8b4",
-  storageBucket: "scoreboard-app-fd8b4.firebasestorage.app",
-  messagingSenderId: "1024693657653",
-  appId: "1:1024693657653:web:fb59422c6a1906fa7c117c",
-  measurementId: "G-XYZ9G8KVYQ"
-};
+// Check if all required Firebase config values are present
+const hasValidConfig = 
+  import.meta.env.VITE_FIREBASE_API_KEY &&
+  import.meta.env.VITE_FIREBASE_AUTH_DOMAIN &&
+  import.meta.env.VITE_FIREBASE_DATABASE_URL &&
+  import.meta.env.VITE_FIREBASE_PROJECT_ID;
 
-// Initialize Firebase only if it hasn't been initialized already
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+const firebaseConfig = hasValidConfig ? {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+} : null;
 
-// Initialize Realtime Database and get a reference to the service
-export const database = getDatabase(app);
+let app: FirebaseApp | undefined;
+let database: Database | null = null;
+let analytics: Analytics | undefined;
 
-// Initialize Analytics (only in production)
-let analytics;
-if (typeof window !== 'undefined' && import.meta.env.PROD) {
-  analytics = getAnalytics(app);
+if (firebaseConfig) {
+  try {
+    // Initialize Firebase only if it hasn't been initialized already
+    app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+
+    // Initialize Realtime Database
+    database = getDatabase(app);
+
+    // Initialize Analytics (only in production)
+    if (typeof window !== 'undefined' && import.meta.env.PROD) {
+      analytics = getAnalytics(app);
+    }
+  } catch (error) {
+    console.error('Error initializing Firebase:', error);
+  }
+} else {
+  console.warn('Firebase configuration is incomplete. Some features may not work.');
 }
 
-export { analytics };
+export { analytics, database };
 export default app;

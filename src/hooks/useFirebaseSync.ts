@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { ref, onValue, set, off } from 'firebase/database';
+import { ref, onValue, set, DatabaseReference, DataSnapshot } from 'firebase/database';
 import { database } from '../config/firebase';
 import { useScoreboardStore } from '../store/scoreboardStore';
 import { ScoreboardState } from '../types/scoreboard';
@@ -7,7 +7,7 @@ import { ScoreboardState } from '../types/scoreboard';
 export const useFirebaseSync = (roomId: string = 'default-room') => {
   const store = useScoreboardStore();
   const isUpdatingRef = useRef(false);
-  const dbRef = useRef(ref(database, `scoreboards/${roomId}`));
+  const dbRef = useRef<ReturnType<typeof ref> | null>(null);
   const unsubscribeRef = useRef<(() => void) | null>(null);
 
   // Update database reference when room changes
@@ -17,14 +17,26 @@ export const useFirebaseSync = (roomId: string = 'default-room') => {
       unsubscribeRef.current();
     }
 
-    dbRef.current = ref(database, `scoreboards/${roomId}`);
+    // Only set up Firebase if database is available
+    if (database) {
+      dbRef.current = ref(database, `scoreboards/${roomId}`);
+    } else {
+      console.warn('Firebase database not available - running in local-only mode');
+      dbRef.current = null;
+    }
   }, [roomId]);
 
   useEffect(() => {
+    // Skip Firebase setup if database is not available
+    if (!database || !dbRef.current) {
+      console.warn('Firebase sync disabled - running in local-only mode');
+      return;
+    }
+
     const scoreboardRef = dbRef.current;
 
     // Listen for changes from Firebase
-    const handleDataChange = (snapshot: any) => {
+    const handleDataChange = (snapshot: DataSnapshot) => {
       if (isUpdatingRef.current) return;
       
       const data = snapshot.val();
@@ -151,6 +163,12 @@ export const useFirebaseSync = (roomId: string = 'default-room') => {
 
   const emitUpdate = useCallback(async (state: ScoreboardState) => {
     if (isUpdatingRef.current) return;
+
+    // Skip Firebase update if database is not available
+    if (!database || !dbRef.current) {
+      console.warn('Firebase update skipped - running in local-only mode');
+      return;
+    }
 
     try {
       console.log('Emitting update to Firebase:', state);
